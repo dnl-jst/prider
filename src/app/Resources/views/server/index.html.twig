@@ -4,6 +4,10 @@
 
     <h1>Server-Übersicht</h1>
 
+    <p>
+        <a class="btn btn-primary" href="{{ path('server_add') }}"><i class="fa fa-plus"></i></a>
+    </p>
+
     {% for group in groups %}
     <div class="group">
         <h2>{{ group.name }}</h2>
@@ -25,6 +29,8 @@
 
                         <a class="btn btn-primary btn-server-check" href="{{ path('server_check', {id: server.id}) }}"><i class="fa fa-refresh"></i></a>
                         <a class="btn btn-primary btn-server-upgrade" href="{{ path('server_upgrade', {id: server.id}) }}"><i class="fa fa-send"></i></a>
+                        <a class="btn btn-primary" href="{{ path('server_edit', {id: server.id}) }}"><i class="fa fa-edit"></i></a>
+                        <a class="btn btn-primary" href="{{ path('server_delete', {id: server.id}) }}"><i class="fa fa-times"></i></a>
                     </div>
                 </div>
             </div>
@@ -58,6 +64,8 @@
 
                             <a class="btn btn-primary btn-server-check" href="{{ path('server_check', {id: server.id}) }}"><i class="fa fa-refresh"></i></a>
                             <a class="btn btn-primary btn-server-upgrade" href="{{ path('server_upgrade', {id: server.id}) }}"><i class="fa fa-send"></i></a>
+                            <a class="btn btn-primary" href="{{ path('server_edit', {id: server.id}) }}"><i class="fa fa-edit"></i></a>
+                            <a class="btn btn-primary" href="{{ path('server_delete', {id: server.id}) }}"><i class="fa fa-times"></i></a>
                         </div>
                     </div>
                 </div>

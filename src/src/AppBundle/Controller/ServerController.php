@@ -4,6 +4,7 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Group;
 use AppBundle\Entity\Server;
+use AppBundle\Form\ServerType;
 use AppBundle\Util\Ssh;
 use Doctrine\ORM\EntityManager;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -36,6 +37,115 @@ class ServerController extends Controller
             'groups' => $groups,
             'ungroupedServers' => $ungroupedServers
         ]);
+    }
+
+    /**
+     * @Route("/add", name="server_add")
+     */
+    public function addAction(Request $request)
+    {
+        if ($request->get('cancel')) {
+            return $this->redirectToRoute('company_index');
+        }
+
+        /** @var EntityManager $em */
+        $em = $this->getDoctrine()->getManager();
+
+        $server = new Server();
+        $form = $this->createForm(ServerType::class, $server);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $this->addFlash('success', 'Server "' . $server->getHostname() . '" wurde erfolgreich angelegt.');
+
+            $em->persist($server);
+            $em->flush();
+
+            return $this->redirectToRoute('server_index');
+        }
+
+        return $this->render('server/form.html.twig', [
+            'title' => 'Server erstellen',
+            'form' => $form->createView()
+        ]);
+    }
+
+    /**
+     * @Route("/edit/{id}", name="server_edit")
+     */
+    public function editAction(Request $request, $id)
+    {
+        if ($request->get('cancel')) {
+            return $this->redirectToRoute('company_index');
+        }
+
+        /** @var EntityManager $em */
+        $em = $this->getDoctrine()->getManager();
+
+        /** @var Server $server */
+        $server = $em->getRepository('AppBundle:Server')->findOneBy(['id' => $id]);
+
+        if (!$server) {
+            throw $this->createNotFoundException();
+        }
+
+        $form = $this->createForm(ServerType::class, $server);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $this->addFlash('success', 'Server "' . $server->getHostname() . '" wurde erfolgreich gespeichert.');
+
+            $em->persist($server);
+            $em->flush();
+
+            return $this->redirectToRoute('server_index');
+        }
+
+        return $this->render('server/form.html.twig', [
+            'title' => 'Server bearbeiten',
+            'form' => $form->createView()
+        ]);
+    }
+
+    /**
+     * @Route("/delete/{id}", name="server_delete")
+     */
+    public function deleteAction(Request $request, $id)
+    {
+        /** @var EntityManager $em */
+        $em = $this->getDoctrine()->getManager();
+
+        /** @var Server $server */
+        $server = $em->getRepository('AppBundle:Server')->findOneBy(['id' => $id]);
+
+        if (!$server) {
+            throw $this->createNotFoundException();
+        }
+
+        if ($request->isMethod('post')) {
+
+            if (!$request->get('cancel')) {
+                $em->remove($server);
+                $em->flush();
+
+                $this->addFlash('success', 'Server "' . $server->getName() . '" wurde gelöscht.');
+            }
+
+            return $this->redirectToRoute('server_index');
+        }
+
+        return $this->render(
+            'delete-form.html.twig',
+            array(
+                'headline' => 'Server wirklich löschen?',
+                'text' => 'Sind Sie sicher, dass Sie den Server wirklich löschen möchten?',
+                'entityTitle' => 'Server-Name: "' . $server->getName() . '"'
+            )
+        );
     }
 
     /**

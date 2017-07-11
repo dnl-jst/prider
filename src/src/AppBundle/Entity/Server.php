@@ -44,7 +44,7 @@ class Server
     /**
      * @ORM\Column(type="integer")
      */
-    private $sshPort;
+    private $sshPort = 22;
 
     /**
      * @ORM\Column(type="datetime")

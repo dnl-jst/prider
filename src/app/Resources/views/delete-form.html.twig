@@ -1,0 +1,32 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="container">
+
+        <div class="row">
+            <div class="col-xs-12">
+                <h1>{{ headline }}</h1>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="well">
+
+                    <form method="post" action="">
+                        <div class="form-group">
+                            {{ text }}<br>
+                            <br>
+                            {{ entityTitle }}
+                        </div>
+
+                        <div class="form-group">
+                            <button type="submit" name="delete" value="yes" class="btn btn-primary">Löschen</button>
+                            <button type="submit" name="cancel" value="yes" class="btn btn-default">Abbrechen</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
