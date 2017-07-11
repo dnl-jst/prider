@@ -1,0 +1,15 @@
+{
+  "name": "prider",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "font-awesome": "fontawesome#^4.6.3",
+    "bootstrap": "v4.0.0-alpha.6"
+  }
+}
