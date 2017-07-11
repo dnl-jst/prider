@@ -1,0 +1,36 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="container">
+        <div class="row">
+            <div class="col">
+
+                <h1>{{ title }}</h1>
+
+                {{ form_start(form) }}
+
+                {{ form_errors(form) }}
+
+                <div class="form-group">
+                    {{ form_row(form.name, { 'attr': {'class': 'form-control'} }) }}
+                </div>
+
+                <div class="form-group">
+                    {{ form_row(form.email, { 'attr': {'class': 'form-control'} }) }}
+                </div>
+
+                <div class="form-group">
+                    {{ form_row(form.plainPassword, { 'attr': {'class': 'form-control'} }) }}
+                </div>
+
+                <div class="text-center form-group">
+                    <button type="submit" name="save" value="yes" class="btn btn-primary">Speichern</button>
+                    <button type="submit" name="cancel" value="yes" class="btn btn-secondary">Abbrechen</button>
+                </div>
+
+                {{ form_end(form) }}
+
+            </div>
+        </div>
+    </div>
+{% endblock %}

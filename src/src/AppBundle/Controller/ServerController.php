@@ -45,7 +45,7 @@ class ServerController extends Controller
     public function addAction(Request $request)
     {
         if ($request->get('cancel')) {
-            return $this->redirectToRoute('company_index');
+            return $this->redirectToRoute('server_index');
         }
 
         /** @var EntityManager $em */
@@ -78,7 +78,7 @@ class ServerController extends Controller
     public function editAction(Request $request, $id)
     {
         if ($request->get('cancel')) {
-            return $this->redirectToRoute('company_index');
+            return $this->redirectToRoute('server_index');
         }
 
         /** @var EntityManager $em */
