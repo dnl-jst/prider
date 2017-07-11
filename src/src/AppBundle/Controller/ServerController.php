@@ -73,7 +73,7 @@ class ServerController extends Controller
             $line = fgets($stream);
 
             if (preg_match('~(\d+) upgraded, (\d+) newly installed, (\d+) to remove and (\d+) not upgraded~', $line, $matches)) {
-                $server->setUpdates($matches[1]);
+                $server->setUpdates((int)$matches[1]);
             }
 
             if (preg_match('~^Inst ([^\s]+).*security.*\)$~', $line)) {

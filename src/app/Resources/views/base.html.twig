@@ -31,23 +31,23 @@
         <a class="navbar-brand" href="/">Prider</a>
 
         <div class="collapse navbar-collapse" id="mainNavbar">
-            {% if is_granted('IS_AUTHENTICATED_FULLY') %}
             <ul class="navbar-nav mr-auto">
+                {% if is_granted('IS_AUTHENTICATED_FULLY') %}
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Server</a>
+                    <a class="nav-link" href="{{ path('server_index') }}">Server</a>
                 </li>
+                {% endif %}
             </ul>
-            {% endif %}
             <ul class="navbar-nav my-2 my-lg-0">
                 {% if is_granted('IS_AUTHENTICATED_FULLY') %}
                 <li class="nav-item">
-                    <a class="nav-link" href="#">
+                    <a class="nav-link" href="{{ path('security_logout') }}">
                         Abmelden
                     </a>
                 </li>
                 {% else %}
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Login</a>
+                    <a class="nav-link" href="{{ path('security_login') }}">Login</a>
                 </li>
                 {% endif %}
             </ul>
