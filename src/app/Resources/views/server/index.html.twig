@@ -113,6 +113,10 @@
 
             e.preventDefault();
 
+            if (!confirm('Sind Sie sicher, dass Sie auf diesem Server ein Upgrade durchführen möchten?')) {
+              return false;
+            }
+
             $(this).html('<i class="fa fa-spinner fa-spin"></i>');
 
             var $that = $(this);
