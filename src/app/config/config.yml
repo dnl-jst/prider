@@ -32,6 +32,7 @@ framework:
     assets: ~
     php_errors:
         log: true
+    translator: { fallbacks: [en] }
 
 # Twig Configuration
 twig:

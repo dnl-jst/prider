@@ -23,7 +23,7 @@ class User implements UserInterface, \Serializable
 
     /**
      * @ORM\Column(type="string", length=255, unique=true)
-     * @Assert\NotBlank(message = "Sie müssen dieses Feld ausfüllen.")
+     * @Assert\NotBlank()
      * @Assert\Email()
      */
     private $email;
@@ -31,7 +31,7 @@ class User implements UserInterface, \Serializable
     /**
      * @Assert\Length(
      *     min = 6,
-     *     minMessage = "Das Passwort muss mindestens {{ limit }} Zeichen lang sein."
+     *     minMessage = "The password must be at least {{ limit }} characters long."
      * )
      */
     private $plainPassword;

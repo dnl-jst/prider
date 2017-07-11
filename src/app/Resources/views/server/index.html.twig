@@ -2,7 +2,7 @@
 
 {% block body %}
 
-    <h1>Server-Übersicht</h1>
+    <h1>{% trans %}Servers{% endtrans %}</h1>
 
     <p>
         <a class="btn btn-primary" href="{{ path('server_add') }}"><i class="fa fa-plus"></i></a>
@@ -45,7 +45,7 @@
     <hr>
 
     <div class="group">
-        <h2>Server ohne Gruppe</h2>
+        <h2>{% trans %}Servers without group{% endtrans %}</h2>
 
         <p>
             <a class="btn btn-primary btn-refresh-group" href="#"><i class="fa fa-refresh"></i></a>
@@ -113,7 +113,7 @@
 
             e.preventDefault();
 
-            if (!confirm('Sind Sie sicher, dass Sie auf diesem Server ein Upgrade durchführen möchten?')) {
+            if (!confirm('{% trans %}Are you sure you want to upgrade the server?{% endtrans %}')) {
               return false;
             }
 

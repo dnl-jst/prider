@@ -58,7 +58,7 @@ class ServerController extends Controller
 
         if ($form->isSubmitted() && $form->isValid()) {
 
-            $this->addFlash('success', 'Server "' . $server->getHostname() . '" wurde erfolgreich angelegt.');
+            $this->addFlash('success', $this->get('translator')->trans('Server "%name%" was created.', ['name' => $server->getName()]));
 
             $em->persist($server);
             $em->flush();
@@ -97,7 +97,7 @@ class ServerController extends Controller
 
         if ($form->isSubmitted() && $form->isValid()) {
 
-            $this->addFlash('success', 'Server "' . $server->getHostname() . '" wurde erfolgreich gespeichert.');
+            $this->addFlash('success', $this->get('translator')->trans('Server "%name%" was updated.', ['name' => $server->getName()]));
 
             $em->persist($server);
             $em->flush();
@@ -132,7 +132,7 @@ class ServerController extends Controller
                 $em->remove($server);
                 $em->flush();
 
-                $this->addFlash('success', 'Server "' . $server->getName() . '" wurde gelöscht.');
+                $this->addFlash('success', $this->get('translator')->trans('Server "%name%" was deleted.', ['name' => $server->getName()]));
             }
 
             return $this->redirectToRoute('server_index');
@@ -141,9 +141,9 @@ class ServerController extends Controller
         return $this->render(
             'delete-form.html.twig',
             array(
-                'headline' => 'Server wirklich löschen?',
-                'text' => 'Sind Sie sicher, dass Sie den Server wirklich löschen möchten?',
-                'entityTitle' => 'Server-Name: "' . $server->getName() . '"'
+                'headline' => $this->get('translator')->trans('Really delete server?'),
+                'text' => $this->get('translator')->trans('Are you really sure you want to delete this server?'),
+                'entityTitle' => $this->get('translator')->trans('Server name: %name%', ['name' => $server->getName()])
             )
         );
     }

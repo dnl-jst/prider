@@ -32,15 +32,15 @@ class UserType extends AbstractType
             ->setMethod($options['method'])
             ->add('name', TextType::class, [
                 'required' => true,
-                'label' => 'Name:'
+                'label' => 'Name'
             ])
             ->add('email', EmailType::class, [
                 'required' => true,
-                'label' => 'E-Mail-Adresse:'
+                'label' => 'E-Mail Address'
             ])
             ->add('plainPassword', PasswordType::class, [
                 'required' => false,
-                'label' => 'Passwort:'
+                'label' => 'Password'
             ]);
     }
 

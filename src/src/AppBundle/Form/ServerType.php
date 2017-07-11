@@ -30,23 +30,23 @@ class ServerType extends AbstractType
             ->setMethod($options['method'])
             ->add('name', TextType::class, [
                 'required' => true,
-                'label' => 'Name:'
+                'label' => 'Name'
             ])
             ->add('hostname', TextType::class, [
                 'required' => true,
-                'label' => 'Hostname oder IP:'
+                'label' => 'Hostname or IP'
             ])
             ->add('sshUser', TextType::class, [
                 'required' => true,
-                'label' => 'SSH-Benutzername:'
+                'label' => 'SSH username'
             ])
             ->add('sshPassword', TextType::class, [
                 'required' => true,
-                'label' => 'SSH-Passwort:'
+                'label' => 'SSH password'
             ])
             ->add('sshPort', NumberType::class, [
                 'required' => true,
-                'label' => 'SSH-Port:'
+                'label' => 'SSH port:'
             ])
             ->add('group', EntityType::class, [
                 'class' => 'AppBundle:Group',
@@ -54,7 +54,7 @@ class ServerType extends AbstractType
                 'choice_label' => function (Group $group) {
                     return $group->getName();
                 },
-                'label' => 'Server-Gruppe:',
+                'label' => 'Group:',
             ]);
     }
 

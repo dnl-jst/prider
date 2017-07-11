@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8" />
-    <title>{% block title %}Prider Server Update Management{% endblock %}</title>
+    <title>{% block title %}{% trans %}Prider Server Update Management{% endtrans %}{% endblock %}</title>
 
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro">
     <link rel="stylesheet" href="/bower_components/font-awesome/css/font-awesome.min.css" />
@@ -28,32 +28,30 @@
     </button>
 
     <div class="navbar-container container center-layout">
-        <a class="navbar-brand" href="/">Prider Server Update Management</a>
+        <a class="navbar-brand" href="/">{% trans %}Prider Server Update Management{% endtrans %}</a>
 
         <div class="collapse navbar-collapse" id="mainNavbar">
             <ul class="navbar-nav mr-auto">
                 {% if is_granted('IS_AUTHENTICATED_FULLY') %}
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ path('server_index') }}">Server</a>
+                    <a class="nav-link" href="{{ path('server_index') }}">{% trans %}Servers{% endtrans %}</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ path('group_index') }}">Gruppen</a>
+                    <a class="nav-link" href="{{ path('group_index') }}">{% trans %}Groups{% endtrans %}</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ path('user_index') }}">Benutzer</a>
+                    <a class="nav-link" href="{{ path('user_index') }}">{% trans %}Users{% endtrans %}</a>
                 </li>
                 {% endif %}
             </ul>
             <ul class="navbar-nav my-2 my-lg-0">
                 {% if is_granted('IS_AUTHENTICATED_FULLY') %}
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ path('security_logout') }}">
-                        Abmelden
-                    </a>
+                    <a class="nav-link" href="{{ path('security_logout') }}">{% trans %}Logout{% endtrans %}</a>
                 </li>
                 {% else %}
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ path('security_login') }}">Login</a>
+                    <a class="nav-link" href="{{ path('security_login') }}">{% trans %}Login{% endtrans %}</a>
                 </li>
                 {% endif %}
             </ul>
@@ -89,7 +87,7 @@
     <div class="container">
         <div class="row">
             <div class="col text-center">
-                &copy; {{ "now" | date("Y") }} Prider Server Update Management
+                &copy; {{ "now" | date("Y") }} {% trans %}Prider Server Update Management{% endtrans %}
             </div>
         </div>
     </div>

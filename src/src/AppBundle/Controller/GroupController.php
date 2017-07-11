@@ -49,7 +49,7 @@ class GroupController extends Controller
 
         if ($form->isSubmitted() && $form->isValid()) {
 
-            $this->addFlash('success', 'Gruppe "' . $group->getName() . '" wurde erfolgreich angelegt.');
+            $this->addFlash('success', $this->get('translator')->trans('Group "%name%" was created.', ['name' => $group->getName()]));
 
             $em->persist($group);
             $em->flush();
@@ -88,7 +88,7 @@ class GroupController extends Controller
 
         if ($form->isSubmitted() && $form->isValid()) {
 
-            $this->addFlash('success', 'Server "' . $group->getName() . '" wurde erfolgreich gespeichert.');
+            $this->addFlash('success', $this->get('translator')->trans('Group "%name%" was updated.', ['name' => $group->getName()]));
 
             $em->persist($group);
             $em->flush();
@@ -123,7 +123,7 @@ class GroupController extends Controller
                 $em->remove($group);
                 $em->flush();
 
-                $this->addFlash('success', 'Gruppe "' . $group->getName() . '" wurde gelöscht.');
+                $this->addFlash('success', $this->get('translator')->trans('Group "%name%" was deleted.', ['name' => $group->getName()]));
             }
 
             return $this->redirectToRoute('group_index');
@@ -132,9 +132,9 @@ class GroupController extends Controller
         return $this->render(
             'delete-form.html.twig',
             array(
-                'headline' => 'Gruppe wirklich löschen?',
-                'text' => 'Sind Sie sicher, dass Sie den Gruppe wirklich löschen möchten?',
-                'entityTitle' => 'Gruppen-Name: "' . $group->getName() . '"'
+                'headline' => $this->get('translator')->trans('Really delete group?'),
+                'text' => $this->get('translator')->trans('Are you really sure you want to delete this group?'),
+                'entityTitle' => $this->get('translator')->trans('Group name: %name%', ['name' => $group->getName()])
             )
         );
     }

@@ -53,7 +53,7 @@ class UserController extends Controller
         if ($form->isSubmitted() && $form->isValid()) {
 
             if (!$user->getPlainPassword()) {
-                $form->addError(new FormError('Bitte vergeben Sie ein Passwort.'));
+                $form->addError(new FormError($this->get('translator')->trans('Please enter a password.')));
             }
 
             if (!$form->getErrors()->count()) {
@@ -63,7 +63,7 @@ class UserController extends Controller
 
                 $user->setPassword($password);
 
-                $this->addFlash('success', 'Benutzer "' . $user->getEmail() . '" wurde erfolgreich angelegt.');
+                $this->addFlash('success', $this->get('translator')->trans('User "%name%" successfully created.', ['name' => $user->getName()]));
 
                 $em->persist($user);
                 $em->flush();
@@ -111,7 +111,7 @@ class UserController extends Controller
                 $user->setPassword($password);
             }
 
-            $this->addFlash('success', 'Benutzer "' . $user->getEmail() . '" wurde erfolgreich gespeichert.');
+            $this->addFlash('success', $this->get('translator')->trans('User "%name%" successfully updated.', ['name' => $user->getName()]));
 
             $em->persist($user);
             $em->flush();
@@ -146,7 +146,7 @@ class UserController extends Controller
                 $em->remove($user);
                 $em->flush();
 
-                $this->addFlash('success', 'Benutzer "' . $user->getEmail() . '" wurde gelöscht.');
+                $this->addFlash('success', $this->get('translator')->trans('User "%name%" successfully deleted.', ['name' => $user->getName()]));
             }
 
             return $this->redirectToRoute('user_index');
@@ -155,9 +155,9 @@ class UserController extends Controller
         return $this->render(
             'delete-form.html.twig',
             array(
-                'headline' => 'Benutzer wirklich löschen?',
-                'text' => 'Sind Sie sicher, dass Sie den Benutzer wirklich löschen möchten?',
-                'entityTitle' => 'Benutzer-Name: "' . $user->getEmail() . '"'
+                'headline' => $this->get('translator')->trans('Really delete user?'),
+                'text' => $this->get('translator')->trans('Are you really sure you want to delete this user?'),
+                'entityTitle' => $this->get('translator')->trans('User name: %name%', ['name' => $user->getName()])
             )
         );
     }

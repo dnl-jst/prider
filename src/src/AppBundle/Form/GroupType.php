@@ -30,7 +30,7 @@ class GroupType extends AbstractType
             ->setMethod($options['method'])
             ->add('name', TextType::class, [
                 'required' => true,
-                'label' => 'Name:'
+                'label' => 'Name'
             ]);
     }
 
