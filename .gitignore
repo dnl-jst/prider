@@ -1,0 +1,6 @@
+/.idea/
+/data/
+/.vagrant/
+/node_modules/
+/.sass-cache/
+/src/web/bower_components/
