@@ -65,7 +65,7 @@ class Server
     /**
      * @ORM\Column(type="integer")
      */
-    private $critialUpdates = 0;
+    private $criticalUpdates = 0;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
@@ -289,27 +289,27 @@ class Server
     }
 
     /**
-     * Set critialUpdates
+     * Set criticalUpdates
      *
-     * @param integer $critialUpdates
+     * @param integer $criticalUpdates
      *
      * @return Server
      */
-    public function setCritialUpdates($critialUpdates)
+    public function setCriticalUpdates($criticalUpdates)
     {
-        $this->critialUpdates = $critialUpdates;
+        $this->criticalUpdates = $criticalUpdates;
 
         return $this;
     }
 
     /**
-     * Get critialUpdates
+     * Get criticalUpdates
      *
      * @return integer
      */
-    public function getCritialUpdates()
+    public function getCriticalUpdates()
     {
-        return $this->critialUpdates;
+        return $this->criticalUpdates;
     }
 
     /**

@@ -1,0 +1,119 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+    {% for group in groups %}
+    <div class="group">
+        <h2>{{ group.name }}</h2>
+
+        <p>
+            <a class="btn btn-primary btn-refresh-group" href="#"><i class="fa fa-refresh"></i></a>
+        </p>
+
+        <div class="row">
+            {% for server in group.servers %}
+            <div class="col-xs-12 col-sm-4">
+                <div class="card">
+                    <div class="card-block">
+                        <h4 class="card-title">{{ server.name }}</h4>
+
+                        <p class="update-stats">
+                            <span class="updates">{{ server.updates }}</span> Updates verfügbar, davon <span class="criticalUpdates">{{ server.criticalUpdates }}</span> kritisch
+                        </p>
+
+                        <a class="btn btn-primary btn-server-check" href="{{ path('server_check', {id: server.id}) }}"><i class="fa fa-refresh"></i></a>
+                        <a class="btn btn-primary btn-server-upgrade" href="{{ path('server_upgrade', {id: server.id}) }}"><i class="fa fa-send"></i></a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <hr>
+    {% endfor %}
+
+    <div class="group">
+        <h2>Server ohne Gruppe</h2>
+
+        <p>
+            <a class="btn btn-primary btn-refresh-group" href="#"><i class="fa fa-refresh"></i></a>
+        </p>
+
+        <div class="row">
+            {% for server in ungroupedServers %}
+                <div class="col-xs-12 col-sm-4">
+                    <div class="card">
+                        <div class="card-block">
+                            <h4 class="card-title">{{ server.name }}</h4>
+
+                            <p class="update-stats">
+                                <span class="updates">{{ server.updates }}</span> Updates verfügbar, davon <span class="criticalUpdates">{{ server.criticalUpdates }}</span> kritisch
+                            </p>
+
+                            <a class="btn btn-primary btn-server-check" href="{{ path('server_check', {id: server.id}) }}"><i class="fa fa-refresh"></i></a>
+                            <a class="btn btn-primary btn-server-upgrade" href="{{ path('server_upgrade', {id: server.id}) }}"><i class="fa fa-send"></i></a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        $(function() {
+
+          $('.btn-server-check').click(function(e) {
+
+            e.preventDefault();
+
+            $(this).html('<i class="fa fa-spinner fa-spin"></i>');
+
+            var $that = $(this);
+
+            $.post({
+              url: $that.attr('href'),
+              timeout: 0,
+              success: function(result) {
+                $that.html('<i class="fa fa-refresh"></i>');
+
+                $that.closest('.card').find('.updates').html(result.updates);
+                $that.closest('.card').find('.criticalUpdates').html(result.criticalUpdates);
+              }
+            });
+
+          });
+
+          $('.btn-refresh-group').click(function(e) {
+
+            e.preventDefault();
+
+            $(this).closest('.group').find('.btn-server-check').click();
+
+          });
+
+          $('.btn-server-upgrade').click(function(e) {
+
+            e.preventDefault();
+
+            $(this).html('<i class="fa fa-spinner fa-spin"></i>');
+
+            var $that = $(this);
+
+            $.post({
+              url: $that.attr('href'),
+              timeout: 0,
+              success: function(result) {
+                $that.html('<i class="fa fa-send"></i>');
+
+                $that.closest('.card').find('.updates').html(result.updates);
+                $that.closest('.card').find('.criticalUpdates').html(result.criticalUpdates);
+              }
+            });
+
+          });
+
+        });
+    </script>
+
+{% endblock %}

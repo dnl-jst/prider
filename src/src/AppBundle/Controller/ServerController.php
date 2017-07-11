@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\Group;
 use AppBundle\Entity\Server;
 use AppBundle\Util\Ssh;
 use Doctrine\ORM\EntityManager;
@@ -17,6 +18,26 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
  */
 class ServerController extends Controller
 {
+    /**
+     * @Route("/", name="server_index")
+     */
+    public function indexAction()
+    {
+        /** @var EntityManager $em */
+        $em = $this->getDoctrine()->getManager();
+
+        /** @var Group $groups */
+        $groups = $em->createQuery('SELECT g, s FROM AppBundle:Group g JOIN g.servers s')->getResult();
+
+        /** @var Server $ungroupedServers */
+        $ungroupedServers = $em->createQuery('SELECT s FROM AppBundle:Server s WHERE s.group IS NULL')->getResult();
+
+        return $this->render('server/index.html.twig', [
+            'groups' => $groups,
+            'ungroupedServers' => $ungroupedServers
+        ]);
+    }
+
     /**
      * @Route("/check/{id}", name="server_check")
      */
@@ -45,37 +66,32 @@ class ServerController extends Controller
             'sudo apt-get update && sudo apt-get -q -s upgrade'
         );
 
-        $response = new StreamedResponse();
-        $response->setCallback(function () use ($stream, $server, $em) {
+        $criticalUpdates = 0;
 
-            $criticalUpdates = 0;
+        do {
 
-            do {
+            $line = fgets($stream);
 
-                $line = fgets($stream);
-                echo $line;
-                flush();
-                ob_flush();
+            if (preg_match('~(\d+) upgraded, (\d+) newly installed, (\d+) to remove and (\d+) not upgraded~', $line, $matches)) {
+                $server->setUpdates($matches[1]);
+            }
 
-                if (preg_match('~(\d+) upgraded, (\d+) newly installed, (\d+) to remove and (\d+) not upgraded~', $line, $matches)) {
-                    $server->setUpdates($matches[1]);
-                }
+            if (preg_match('~^Inst ([^\s]+).*security.*\)$~', $line)) {
+                $criticalUpdates++;
+            }
 
-                if (preg_match('~^Inst ([^\s]+).*security.*\)$~', $line)) {
-                    $criticalUpdates++;
-                }
+        } while (!feof($stream));
 
-            } while (!feof($stream));
+        $server->setCriticalUpdates($criticalUpdates);
+        $server->setLastCheck(new \DateTime());
 
-            $server->setCritialUpdates($criticalUpdates);
-            $server->setLastCheck(new \DateTime());
+        $em->persist($server);
+        $em->flush();
 
-            $em->persist($server);
-            $em->flush();
-
-        });
-
-        return $response;
+        return new JsonResponse([
+            'updates' => $server->getUpdates(),
+            'criticalUpdates' => $server->getCriticalUpdates()
+        ]);
     }
 
     /**
@@ -106,26 +122,17 @@ class ServerController extends Controller
             'sudo apt-get update && sudo apt-get -y dist-upgrade'
         );
 
-        $response = new StreamedResponse();
-        $response->setCallback(function () use ($stream, $server, $em) {
+        stream_set_blocking($stream, true);
 
-            do {
+        // wait for stream to finish
+        $response = stream_get_contents($stream);
 
-                $line = fgets($stream);
-                echo $line;
-                flush();
-                ob_flush();
+        $server->setLastCheck(new \DateTime());
+        $server->setLastUpgrade(new \DateTime());
 
-            } while (!feof($stream));
+        $em->persist($server);
+        $em->flush();
 
-            $server->setLastCheck(new \DateTime());
-            $server->setLastUpgrade(new \DateTime());
-
-            $em->persist($server);
-            $em->flush();
-
-        });
-
-        return $response;
+        return $this->forward('AppBundle:Server:check', ['id' => $id]);
     }
 }

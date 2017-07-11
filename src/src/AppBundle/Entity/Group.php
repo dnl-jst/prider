@@ -32,6 +32,11 @@ class Group
     private $created;
 
     /**
+     * @ORM\OneToMany(targetEntity="Server", mappedBy="group")
+     */
+    private $servers;
+
+    /**
      * Constructor
      */
     public function __construct()
@@ -97,4 +102,38 @@ class Group
         return $this->created;
     }
 
+
+    /**
+     * Add server
+     *
+     * @param \AppBundle\Entity\Server $server
+     *
+     * @return Group
+     */
+    public function addServer(\AppBundle\Entity\Server $server)
+    {
+        $this->servers[] = $server;
+
+        return $this;
+    }
+
+    /**
+     * Remove server
+     *
+     * @param \AppBundle\Entity\Server $server
+     */
+    public function removeServer(\AppBundle\Entity\Server $server)
+    {
+        $this->servers->removeElement($server);
+    }
+
+    /**
+     * Get servers
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getServers()
+    {
+        return $this->servers;
+    }
 }
