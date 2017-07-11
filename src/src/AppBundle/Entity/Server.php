@@ -58,6 +58,26 @@ class Server
     private $group;
 
     /**
+     * @ORM\Column(type="integer")
+     */
+    private $updates = 0;
+
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $critialUpdates = 0;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $lastCheck;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $lastUpgrade;
+
+    /**
      * Constructor
      */
     public function __construct()
@@ -242,5 +262,101 @@ class Server
     public function getGroup()
     {
         return $this->group;
+    }
+
+    /**
+     * Set updates
+     *
+     * @param integer $updates
+     *
+     * @return Server
+     */
+    public function setUpdates($updates)
+    {
+        $this->updates = $updates;
+
+        return $this;
+    }
+
+    /**
+     * Get updates
+     *
+     * @return integer
+     */
+    public function getUpdates()
+    {
+        return $this->updates;
+    }
+
+    /**
+     * Set critialUpdates
+     *
+     * @param integer $critialUpdates
+     *
+     * @return Server
+     */
+    public function setCritialUpdates($critialUpdates)
+    {
+        $this->critialUpdates = $critialUpdates;
+
+        return $this;
+    }
+
+    /**
+     * Get critialUpdates
+     *
+     * @return integer
+     */
+    public function getCritialUpdates()
+    {
+        return $this->critialUpdates;
+    }
+
+    /**
+     * Set lastCheck
+     *
+     * @param \DateTime $lastCheck
+     *
+     * @return Server
+     */
+    public function setLastCheck($lastCheck)
+    {
+        $this->lastCheck = $lastCheck;
+
+        return $this;
+    }
+
+    /**
+     * Get lastCheck
+     *
+     * @return \DateTime
+     */
+    public function getLastCheck()
+    {
+        return $this->lastCheck;
+    }
+
+    /**
+     * Set lastUpgrade
+     *
+     * @param \DateTime $lastUpgrade
+     *
+     * @return Server
+     */
+    public function setLastUpgrade($lastUpgrade)
+    {
+        $this->lastUpgrade = $lastUpgrade;
+
+        return $this;
+    }
+
+    /**
+     * Get lastUpgrade
+     *
+     * @return \DateTime
+     */
+    public function getLastUpgrade()
+    {
+        return $this->lastUpgrade;
     }
 }
