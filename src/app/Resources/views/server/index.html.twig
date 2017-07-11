@@ -2,6 +2,8 @@
 
 {% block body %}
 
+    <h1>Server-Übersicht</h1>
+
     {% for group in groups %}
     <div class="group">
         <h2>{{ group.name }}</h2>
@@ -30,8 +32,11 @@
         </div>
     </div>
 
-    <hr>
+    {% if not loop.last %}<hr>{% endif %}
     {% endfor %}
+
+    {% if ungroupedServers | length > 0 %}
+    <hr>
 
     <div class="group">
         <h2>Server ohne Gruppe</h2>
@@ -59,6 +64,7 @@
             {% endfor %}
         </div>
     </div>
+    {% endif %}
 
     <script type="text/javascript">
         $(function() {
