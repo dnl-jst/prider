@@ -78,6 +78,11 @@ class Server
     private $lastUpgrade;
 
     /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $type = 'apt';
+
+    /**
      * Constructor
      */
     public function __construct()
@@ -358,5 +363,29 @@ class Server
     public function getLastUpgrade()
     {
         return $this->lastUpgrade;
+    }
+
+    /**
+     * Set type
+     *
+     * @param string $type
+     *
+     * @return Server
+     */
+    public function setType($type)
+    {
+        $this->type = $type;
+
+        return $this;
+    }
+
+    /**
+     * Get type
+     *
+     * @return string
+     */
+    public function getType()
+    {
+        return $this->type;
     }
 }

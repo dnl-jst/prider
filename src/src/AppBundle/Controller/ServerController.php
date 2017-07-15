@@ -168,12 +168,28 @@ class ServerController extends Controller
             ], 404);
         }
 
+        switch ($server->getType()) {
+
+            case 'apt':
+                $command = 'sudo apt-get update && sudo apt-get -q -s upgrade';
+                break;
+
+            case 'yum':
+                $command = 'sudo yum -C --security check-update';
+                break;
+
+            default:
+                return new JsonResponse([
+                    'success' => false
+                ], 500);
+        }
+
         $stream = $ssh->executeCommand(
             $server->getHostname(),
             $server->getSshPort(),
             $server->getSshUser(),
             $server->getSshPassword(),
-            'sudo apt-get update && sudo apt-get -q -s upgrade'
+            $command
         );
 
         $criticalUpdates = 0;
@@ -182,12 +198,31 @@ class ServerController extends Controller
 
             $line = fgets($stream);
 
-            if (preg_match('~(\d+) upgraded, (\d+) newly installed, (\d+) to remove and (\d+) not upgraded~', $line, $matches)) {
-                $server->setUpdates((int)$matches[1]);
-            }
+            switch ($server->getType()) {
 
-            if (preg_match('~^Inst ([^\s]+).*security.*\)$~', $line)) {
-                $criticalUpdates++;
+                case 'apt':
+
+                    if (preg_match('~(\d+) upgraded, (\d+) newly installed, (\d+) to remove and (\d+) not upgraded~', $line, $matches)) {
+                        $server->setUpdates((int)$matches[1]);
+                    }
+
+                    if (preg_match('~^Inst ([^\s]+).*security.*\)$~', $line)) {
+                        $criticalUpdates++;
+                    }
+
+                    break;
+
+                case 'yum':
+
+                    if (preg_match('~(No|\d+) packages needed for security; (\d+) packages available~', $line, $matches)) {
+
+                        $server->setUpdates((int)$matches[2]);
+                        $criticalUpdates = (int)$matches[1];
+
+                    }
+
+                    break;
+
             }
 
         } while (!feof($stream));
@@ -224,12 +259,28 @@ class ServerController extends Controller
             ], 404);
         }
 
+        switch ($server->getType()) {
+
+            case 'apt':
+                $command = 'sudo apt-get update && sudo apt-get -y dist-upgrade';
+                break;
+
+            case 'yum':
+                $command = 'sudo yum upgrade -y';
+                break;
+
+            default:
+                return new JsonResponse([
+                    'success' => false
+                ], 500);
+        }
+
         $stream = $ssh->executeCommand(
             $server->getHostname(),
             $server->getSshPort(),
             $server->getSshUser(),
             $server->getSshPassword(),
-            'sudo apt-get update && sudo apt-get -y dist-upgrade'
+            $command
         );
 
         stream_set_blocking($stream, true);

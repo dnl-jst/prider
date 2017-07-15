@@ -55,6 +55,14 @@ class ServerType extends AbstractType
                     return $group->getName();
                 },
                 'label' => 'Group:',
+            ])
+            ->add('type', ChoiceType::class, [
+                'required' => true,
+                'choices' => [
+                    'apt' => 'apt',
+                    'yum' => 'yum'
+                ],
+                'label' => 'Used package manager:'
             ]);
     }
 
