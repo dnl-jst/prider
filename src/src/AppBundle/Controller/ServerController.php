@@ -184,13 +184,28 @@ class ServerController extends Controller
                 ], 500);
         }
 
-        $stream = $ssh->executeCommand(
-            $server->getHostname(),
-            $server->getSshPort(),
-            $server->getSshUser(),
-            $server->getSshPassword(),
-            $command
-        );
+        if ($server->getKeyPair()) {
+
+            $stream = $ssh->executeCommandWithKeyPair(
+                $server->getHostname(),
+                $server->getSshPort(),
+                $server->getSshUser(),
+                $server->getKeyPair()->getPrivateKey(),
+                $server->getKeyPair()->getPublicKey(),
+                $command
+            );
+
+        } else {
+
+            $stream = $ssh->executeCommandWithPassword(
+                $server->getHostname(),
+                $server->getSshPort(),
+                $server->getSshUser(),
+                $server->getSshPassword(),
+                $command
+            );
+
+        }
 
         $criticalUpdates = 0;
 
@@ -275,13 +290,28 @@ class ServerController extends Controller
                 ], 500);
         }
 
-        $stream = $ssh->executeCommand(
-            $server->getHostname(),
-            $server->getSshPort(),
-            $server->getSshUser(),
-            $server->getSshPassword(),
-            $command
-        );
+        if ($server->getKeyPair()) {
+
+            $stream = $ssh->executeCommandWithKeyPair(
+                $server->getHostname(),
+                $server->getSshPort(),
+                $server->getSshUser(),
+                $server->getKeyPair()->getPrivateKey(),
+                $server->getKeyPair()->getPublicKey(),
+                $command
+            );
+
+        } else {
+
+            $stream = $ssh->executeCommandWithPassword(
+                $server->getHostname(),
+                $server->getSshPort(),
+                $server->getSshUser(),
+                $server->getSshPassword(),
+                $command
+            );
+
+        }
 
         stream_set_blocking($stream, true);
 

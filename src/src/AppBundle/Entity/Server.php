@@ -83,6 +83,12 @@ class Server
     private $type = 'apt';
 
     /**
+     * @ORM\ManyToOne(targetEntity="KeyPair")
+     * @ORM\JoinColumn(name="key_pair_id", referencedColumnName="id")
+     */
+    private $keyPair;
+
+    /**
      * Constructor
      */
     public function __construct()
@@ -387,5 +393,29 @@ class Server
     public function getType()
     {
         return $this->type;
+    }
+
+    /**
+     * Set keyPair
+     *
+     * @param \AppBundle\Entity\KeyPair $keyPair
+     *
+     * @return Server
+     */
+    public function setKeyPair(\AppBundle\Entity\KeyPair $keyPair = null)
+    {
+        $this->keyPair = $keyPair;
+
+        return $this;
+    }
+
+    /**
+     * Get keyPair
+     *
+     * @return \AppBundle\Entity\KeyPair
+     */
+    public function getKeyPair()
+    {
+        return $this->keyPair;
     }
 }

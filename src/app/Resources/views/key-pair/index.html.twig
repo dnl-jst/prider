@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+    <h1>{% trans %}Key pairs{% endtrans %}</h1>
+
+    <p>
+        <a class="btn btn-primary" href="{{ path('keyPair_add') }}"><i class="fa fa-plus"></i></a>
+    </p>
+
+    <div class="row">
+    {% for keyPair in keyPairs %}
+
+        <div class="col-xs-12 col-sm-4">
+            <div class="card text-center">
+                <div class="card-block">
+                    <h4 class="card-title">{{ keyPair.name }}</h4>
+
+                    <div class="pb-3">
+                        <label>Public key:</label>
+                        <textarea class="form-control" style="display: block; width: 100%;">{{ keyPair.publicKey }}</textarea>
+                    </div>
+
+                    <a class="btn btn-primary" href="{{ path('keyPair_edit', {id: keyPair.id}) }}"><i class="fa fa-edit"></i></a>
+                    <a class="btn btn-primary" href="{{ path('keyPair_delete', {id: keyPair.id}) }}"><i class="fa fa-times"></i></a>
+                </div>
+            </div>
+        </div>
+
+    {% endfor %}
+    </div>
+
+{% endblock %}

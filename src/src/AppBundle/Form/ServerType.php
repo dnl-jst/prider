@@ -3,6 +3,7 @@
 namespace AppBundle\Form;
 
 use AppBundle\Entity\Group;
+use AppBundle\Entity\KeyPair;
 use AppBundle\Entity\Topic;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -63,6 +64,14 @@ class ServerType extends AbstractType
                     'yum' => 'yum'
                 ],
                 'label' => 'Used package manager:'
+            ])
+            ->add('keyPair', EntityType::class, [
+                'class' => 'AppBundle:KeyPair',
+                'required' => false,
+                'choice_label' => function (KeyPair $keyPair) {
+                    return $keyPair->getName();
+                },
+                'label' => 'SSH Key Pair:',
             ]);
     }
 
