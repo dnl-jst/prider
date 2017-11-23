@@ -33,7 +33,7 @@ class UserController extends Controller
     /**
      * @Route("/add", name="user_add")
      */
-    public function addAction(Request $request, EntityManagerInterface $entityManager, Translator $translator)
+    public function addAction(Request $request, EntityManagerInterface $entityManager)
     {
         if ($request->get('cancel')) {
             return $this->redirectToRoute('user_index');
@@ -45,19 +45,16 @@ class UserController extends Controller
 
         if ($form->isSubmitted() && $form->isValid()) {
             if (!$user->getPlainPassword()) {
-                $form->addError(new FormError($translator->trans('Please enter a password.')));
+                $form->addError(new FormError('Please enter a password.'));
             }
 
             if (!$form->getErrors()->count()) {
                 $password = $this->get('security.password_encoder')
-                                 ->encodePassword($user, $user->getPlainPassword());
+                     ->encodePassword($user, $user->getPlainPassword());
 
                 $user->setPassword($password);
 
-                $this->addFlash('success', $translator->trans(
-                    'User "%name%" successfully created.',
-                    ['%name%' => $user->getName()]
-                ));
+                $this->addFlash('success', 'User successfully created.');
 
                 $entityManager->persist($user);
                 $entityManager->flush();
@@ -79,7 +76,6 @@ class UserController extends Controller
         Request $request,
         EntityManagerInterface $entityManager,
         SessionInterface $session,
-        Translator $translator,
         $id
     ) {
         if ($request->get('cancel')) {
@@ -107,10 +103,7 @@ class UserController extends Controller
                 $user->setPassword($password);
             }
 
-            $this->addFlash('success', $translator->trans(
-                'User "%name%" successfully updated.',
-                ['%name%' => $user->getName()]
-            ));
+            $this->addFlash('success', 'User successfully updated.');
 
             $entityManager->flush();
 
@@ -144,10 +137,7 @@ class UserController extends Controller
                 $entityManager->remove($user);
                 $entityManager->flush();
 
-                $this->addFlash('success', $translator->trans(
-                    'User "%name%" successfully deleted.',
-                    ['%name%' => $user->getName()]
-                ));
+                $this->addFlash('success', 'User successfully deleted.');
             }
 
             return $this->redirectToRoute('user_index');

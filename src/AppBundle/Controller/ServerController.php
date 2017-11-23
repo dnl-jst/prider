@@ -43,7 +43,7 @@ class ServerController extends Controller
     /**
      * @Route("/add", name="server_add")
      */
-    public function addAction(Request $request, EntityManagerInterface $entityManager, Translator $translator)
+    public function addAction(Request $request, EntityManagerInterface $entityManager)
     {
         if ($request->get('cancel')) {
             return $this->redirectToRoute('server_index');
@@ -54,10 +54,7 @@ class ServerController extends Controller
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->addFlash(
-                'success',
-                $translator->trans('Server "%name%" was created.', ['name' => $server->getName()])
-            );
+            $this->addFlash('success', 'Server was created.');
 
             $entityManager->persist($server);
             $entityManager->flush();
@@ -74,7 +71,7 @@ class ServerController extends Controller
     /**
      * @Route("/{id}/edit", name="server_edit")
      */
-    public function editAction(Request $request, EntityManagerInterface $entityManager, Translator $translator, $id)
+    public function editAction(Request $request, EntityManagerInterface $entityManager, $id)
     {
         if ($request->get('cancel')) {
             return $this->redirectToRoute('server_index');
@@ -91,10 +88,7 @@ class ServerController extends Controller
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->addFlash(
-                'success',
-                $translator->trans('Server "%name%" was updated.', ['name' => $server->getName()])
-            );
+            $this->addFlash('success', 'Server was updated.');
 
             $entityManager->flush();
 
@@ -124,10 +118,7 @@ class ServerController extends Controller
                 $entityManager->remove($server);
                 $entityManager->flush();
 
-                $this->addFlash(
-                    'success',
-                    $translator->trans('Server "%name%" was deleted.', ['%name%' => $server->getName()])
-                );
+                $this->addFlash('success', 'Server was deleted.');
             }
 
             return $this->redirectToRoute('server_index');

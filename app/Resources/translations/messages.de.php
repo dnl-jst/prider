@@ -22,6 +22,9 @@ return [
     'Login' => 'Anmelden',
 
     // server
+    'Server was created.' => 'Server wurde erstellt.',
+    'Server was updated.' => 'Server wurde aktualisiert.',
+    'Server was deleted.' => 'Server wurde gelöscht.',
     'Create server' => 'Server erstellen',
     'Edit server' => 'Server bearbeiten',
     'Hostname or IP' => 'Hostname oder IP-Adresse',
@@ -31,9 +34,6 @@ return [
     'SSH key pair' => 'SSH-Schlüssel',
     'Group' => 'Gruppe',
     'Used package manager' => 'Verwendeter Paket-Manager',
-    'Server "%name%" was created.' => 'Server "%name%" wurde erstellt.',
-    'Server "%name%" was updated.' => 'Server "%name%" wurde aktualisiert.',
-    'Server "%name%" was deleted.' => 'Server "%name%" wurde gelöscht.',
     'Really delete server?' => 'Server wirklich löschen?',
     'Are you really sure you want to delete this server?' => 'Sind Sie sicher, dass Sie den Server löschen möchten?',
     'Server name: %name%' => 'Server-Name: %name%',
@@ -43,9 +43,9 @@ return [
 
     // user
     'Please enter a password.' => 'Bitte vergeben Sie ein Passwort.',
-    'User "%name%" successfully created.' => 'Benutzer "%name%" wurde erstellt.',
-    'User "%name%" successfully updated.' => 'Benutzer "%name%" wurde aktualisert.',
-    'User "%name%" successfully deleted.' => 'Benutzer "%name%" wurde gelöscht.',
+    'User successfully created.' => 'Benutzer wurde erstellt.',
+    'User successfully updated.' => 'Benutzer wurde aktualisert.',
+    'User successfully deleted.' => 'Benutzer wurde gelöscht.',
     'Really delete user?' => 'Benutzer wirklich löschen?',
     'Are you really sure you want to delete this user?' => 'Möchten Sie diesen Benutzer wirklich löschen?',
     'E-Mail Address' => 'E-Mail-Adresse',
@@ -58,11 +58,12 @@ return [
     'Hourly notification' => 'Stündliche Benachrichtigungen',
     'Create user' => 'Benutzer erstellen',
     'Edit user' => 'Benutzer bearbeiten',
+    'User name: %name%' => 'User-Name: %name%',
 
     // group
-    'Group "%name%" was created.' => 'Gruppe "%name%" wurde erstellt.',
-    'Group "%name%" was updated.' => 'Gruppe "%name%" wurde aktualisiert.',
-    'Group "%name%" was deleted.' => 'Gruppe "%name%" wurde gelöscht.',
+    'Group was created.' => 'Gruppe wurde erstellt.',
+    'Group was updated.' => 'Gruppe wurde aktualisiert.',
+    'Group was deleted.' => 'Gruppe wurde gelöscht.',
     'Create group' => 'Gruppe erstellen',
     'Edit group' => 'Gruppe bearbeiten',
     'Really delete group?' => 'Gruppe wirklich löschen?',
@@ -70,9 +71,9 @@ return [
     'Group name: %name%' => 'Gruppen-Name: %name%',
 
     // key pair
-    'Key pair "%name%" successfully created.' => 'Schlüssel "%name%" wurde erstellt.',
-    'Key pair "%name%" successfully updated.' => 'Schlüssel "%name%" wurde aktualisiert.',
-    'Key pair "%name%" successfully deleted.' => 'Schlüssel "%name%" wurde gelöscht.',
+    'Key pair successfully created.' => 'Schlüssel wurde erstellt.',
+    'Key pair successfully updated.' => 'Schlüssel wurde aktualisiert.',
+    'Key pair successfully deleted.' => 'Schlüssel wurde gelöscht.',
     'Create key pair' => 'Schlüssel erstellen',
     'Edit key pair' => 'Schlüssel bearbeiten',
     'Really delete key pair?' => 'Wollen Sie den Schlüssel wirklich löschen?',
@@ -83,5 +84,4 @@ return [
     // notification mail
     'Updates are available for the following servers:' => 'Für folgende Server sind Updates verfügbar:',
     'update available' => 'Updates verfügbar',
-
 ];
