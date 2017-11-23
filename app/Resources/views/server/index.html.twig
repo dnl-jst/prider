@@ -4,17 +4,17 @@
 
     <h1>{% trans %}Servers{% endtrans %}</h1>
 
-    <p>
+    <div class="mb-2">
         <a class="btn btn-primary" href="{{ path('server_add') }}"><i class="fa fa-plus"></i></a>
-    </p>
+    </div>
 
     {% for group in groups %}
     <div class="group">
         <h2>{{ group.name }}</h2>
 
-        <p>
+        <div>
             <a class="btn btn-primary btn-refresh-group" href="#"><i class="fa fa-refresh"></i></a>
-        </p>
+        </div>
 
         <div class="row">
             {% for server in group.servers %}

@@ -4,9 +4,9 @@
 
     <h1>{% trans %}Users{% endtrans %}</h1>
 
-    <p>
+    <div class="mb-2">
         <a class="btn btn-primary" href="{{ path('user_add') }}"><i class="fa fa-plus"></i></a>
-    </p>
+    </div>
 
     <div class="row">
     {% for user in users %}
