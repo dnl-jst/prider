@@ -4,17 +4,13 @@ namespace AppBundle\Util;
 
 class Ssh
 {
-
-
     public function executeCommandWithPassword($hostname, $sshPort = 22, $sshUser, $sshPassword, $command)
     {
         $connection = ssh2_connect($hostname, $sshPort);
 
         ssh2_auth_password($connection, $sshUser, $sshPassword);
 
-        $stream = ssh2_exec($connection, $command);
-
-        return $stream;
+        return ssh2_exec($connection, $command);
     }
 
     public function executeCommandWithKeyPair($hostname, $sshPort = 22, $sshUser, $sshPrivateKey, $sshPublicKey, $command)
@@ -32,9 +28,6 @@ class Ssh
         unlink($publicKeyFile);
         unlink($privateKeyFile);
 
-        $stream = ssh2_exec($connection, $command);
-
-        return $stream;
+        return ssh2_exec($connection, $command);
     }
-
 }

@@ -6,13 +6,11 @@ use AppBundle\Entity\Group;
 use AppBundle\Entity\Server;
 use AppBundle\Form\ServerType;
 use AppBundle\Util\Ssh;
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\StreamedResponse;
 
 /**
  * @Route("/server")
@@ -22,16 +20,17 @@ class ServerController extends Controller
     /**
      * @Route("/", name="server_index")
      */
-    public function indexAction()
+    public function indexAction(EntityManagerInterface $entityManager)
     {
-        /** @var EntityManager $em */
-        $em = $this->getDoctrine()->getManager();
-
         /** @var Group $groups */
-        $groups = $em->createQuery('SELECT g, s FROM AppBundle:Group g JOIN g.servers s')->getResult();
+        $groups = $entityManager
+            ->createQuery('SELECT g, s FROM AppBundle:Group g JOIN g.servers s ORDER BY g.name ASC, s.name ASC')
+            ->getResult();
 
         /** @var Server $ungroupedServers */
-        $ungroupedServers = $em->createQuery('SELECT s FROM AppBundle:Server s WHERE s.group IS NULL')->getResult();
+        $ungroupedServers = $entityManager
+            ->createQuery('SELECT s FROM AppBundle:Server s WHERE s.group IS NULL ORDER BY s.name ASC')
+            ->getResult();
 
         return $this->render('server/index.html.twig', [
             'groups' => $groups,
@@ -42,26 +41,24 @@ class ServerController extends Controller
     /**
      * @Route("/add", name="server_add")
      */
-    public function addAction(Request $request)
+    public function addAction(Request $request, EntityManagerInterface $entityManager)
     {
         if ($request->get('cancel')) {
             return $this->redirectToRoute('server_index');
         }
 
-        /** @var EntityManager $em */
-        $em = $this->getDoctrine()->getManager();
-
         $server = new Server();
         $form = $this->createForm(ServerType::class, $server);
-
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $this->addFlash(
+                'success',
+                $this->get('translator')->trans('Server "%name%" was created.', ['name' => $server->getName()])
+            );
 
-            $this->addFlash('success', $this->get('translator')->trans('Server "%name%" was created.', ['name' => $server->getName()]));
-
-            $em->persist($server);
-            $em->flush();
+            $entityManager->persist($server);
+            $entityManager->flush();
 
             return $this->redirectToRoute('server_index');
         }
@@ -75,32 +72,29 @@ class ServerController extends Controller
     /**
      * @Route("/edit/{id}", name="server_edit")
      */
-    public function editAction(Request $request, $id)
+    public function editAction(Request $request, EntityManagerInterface $entityManager, $id)
     {
         if ($request->get('cancel')) {
             return $this->redirectToRoute('server_index');
         }
 
-        /** @var EntityManager $em */
-        $em = $this->getDoctrine()->getManager();
-
         /** @var Server $server */
-        $server = $em->getRepository('AppBundle:Server')->findOneBy(['id' => $id]);
+        $server = $entityManager->getRepository('AppBundle:Server')->findOneBy(['id' => $id]);
 
         if (!$server) {
             throw $this->createNotFoundException();
         }
 
         $form = $this->createForm(ServerType::class, $server);
-
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $this->addFlash(
+                'success',
+                $this->get('translator')->trans('Server "%name%" was updated.', ['name' => $server->getName()])
+            );
 
-            $this->addFlash('success', $this->get('translator')->trans('Server "%name%" was updated.', ['name' => $server->getName()]));
-
-            $em->persist($server);
-            $em->flush();
+            $entityManager->flush();
 
             return $this->redirectToRoute('server_index');
         }
@@ -114,25 +108,24 @@ class ServerController extends Controller
     /**
      * @Route("/delete/{id}", name="server_delete")
      */
-    public function deleteAction(Request $request, $id)
+    public function deleteAction(Request $request, EntityManagerInterface $entityManager, $id)
     {
-        /** @var EntityManager $em */
-        $em = $this->getDoctrine()->getManager();
-
         /** @var Server $server */
-        $server = $em->getRepository('AppBundle:Server')->findOneBy(['id' => $id]);
+        $server = $entityManager->getRepository('AppBundle:Server')->findOneBy(['id' => $id]);
 
         if (!$server) {
             throw $this->createNotFoundException();
         }
 
         if ($request->isMethod('post')) {
-
             if (!$request->get('cancel')) {
-                $em->remove($server);
-                $em->flush();
+                $entityManager->remove($server);
+                $entityManager->flush();
 
-                $this->addFlash('success', $this->get('translator')->trans('Server "%name%" was deleted.', ['name' => $server->getName()]));
+                $this->addFlash(
+                    'success',
+                    $this->get('translator')->trans('Server "%name%" was deleted.', ['name' => $server->getName()])
+                );
             }
 
             return $this->redirectToRoute('server_index');
@@ -151,25 +144,20 @@ class ServerController extends Controller
     /**
      * @Route("/check/{id}", name="server_check")
      */
-    public function checkAction($id, Ssh $ssh)
+    public function checkAction(EntityManagerInterface $entityManager, Ssh $ssh, $id)
     {
-        set_time_limit(0);
-
-        /** @var EntityManager $em */
-        $em = $this->getDoctrine()->getManager();
+        set_time_limit(300);
 
         /** @var Server $server */
-        $server = $em->getRepository('AppBundle:Server')->findOneBy(['id' => $id]);
+        $server = $entityManager->getRepository(Server::class)->findOneBy(['id' => $id]);
 
         if (!$server) {
-
             return new JsonResponse([
                 'success' => false
             ], 404);
         }
 
         switch ($server->getType()) {
-
             case 'apt':
                 $command = 'sudo apt-get update && sudo apt-get -q -s upgrade';
                 break;
@@ -210,13 +198,10 @@ class ServerController extends Controller
         $criticalUpdates = 0;
 
         do {
-
             $line = fgets($stream);
 
             switch ($server->getType()) {
-
                 case 'apt':
-
                     if (preg_match('~(\d+) upgraded, (\d+) newly installed, (\d+) to remove and (\d+) not upgraded~', $line, $matches)) {
                         $server->setUpdates((int)$matches[1]);
                     }
@@ -228,7 +213,6 @@ class ServerController extends Controller
                     break;
 
                 case 'yum':
-
                     if (preg_match('~(No|\d+) packages needed for security; (\d+) packages available~', $line, $matches)) {
 
                         $server->setUpdates((int)$matches[2]);
@@ -237,16 +221,13 @@ class ServerController extends Controller
                     }
 
                     break;
-
             }
-
         } while (!feof($stream));
 
         $server->setCriticalUpdates($criticalUpdates);
         $server->setLastCheck(new \DateTime());
 
-        $em->persist($server);
-        $em->flush();
+        $entityManager->flush();
 
         return new JsonResponse([
             'updates' => $server->getUpdates(),
@@ -257,25 +238,20 @@ class ServerController extends Controller
     /**
      * @Route("/upgrade/{id}", name="server_upgrade")
      */
-    public function upgradeAction($id, Ssh $ssh)
+    public function upgradeAction(EntityManagerInterface $entityManager, Ssh $ssh, $id)
     {
-        set_time_limit(0);
-
-        /** @var EntityManager $em */
-        $em = $this->getDoctrine()->getManager();
+        set_time_limit(600);
 
         /** @var Server $server */
-        $server = $em->getRepository('AppBundle:Server')->findOneBy(['id' => $id]);
+        $server = $entityManager->getRepository('AppBundle:Server')->findOneBy(['id' => $id]);
 
         if (!$server) {
-
             return new JsonResponse([
                 'success' => false
             ], 404);
         }
 
         switch ($server->getType()) {
-
             case 'apt':
                 $command = 'sudo apt-get update && sudo apt-get -y dist-upgrade';
                 break;
@@ -291,7 +267,6 @@ class ServerController extends Controller
         }
 
         if ($server->getKeyPair()) {
-
             $stream = $ssh->executeCommandWithKeyPair(
                 $server->getHostname(),
                 $server->getSshPort(),
@@ -300,9 +275,7 @@ class ServerController extends Controller
                 $server->getKeyPair()->getPublicKey(),
                 $command
             );
-
         } else {
-
             $stream = $ssh->executeCommandWithPassword(
                 $server->getHostname(),
                 $server->getSshPort(),
@@ -310,19 +283,18 @@ class ServerController extends Controller
                 $server->getSshPassword(),
                 $command
             );
-
         }
 
         stream_set_blocking($stream, true);
 
         // wait for stream to finish
-        $response = stream_get_contents($stream);
+        stream_get_contents($stream);
 
         $server->setLastCheck(new \DateTime());
         $server->setLastUpgrade(new \DateTime());
 
-        $em->persist($server);
-        $em->flush();
+        $entityManager->persist($server);
+        $entityManager->flush();
 
         return $this->forward('AppBundle:Server:check', ['id' => $id]);
     }

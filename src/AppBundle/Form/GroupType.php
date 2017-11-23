@@ -17,30 +17,12 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class GroupType extends AbstractType
 {
-
-    public function getName()
-    {
-        return 'GroupType';
-    }
-
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->setAction($options['action'])
-            ->setMethod($options['method'])
             ->add('name', TextType::class, [
                 'required' => true,
                 'label' => 'Name'
             ]);
     }
-
-    public function configureOptions(OptionsResolver $resolver)
-    {
-        $resolver->setDefaults([
-            'data_class' => 'AppBundle\Entity\Group',
-            'action' => '',
-            'method' => 'POST'
-        ]);
-    }
-
 }

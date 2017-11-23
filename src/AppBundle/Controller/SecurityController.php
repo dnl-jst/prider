@@ -3,10 +3,8 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Customer;
-use AppBundle\Entity\User;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\Request;
 
 class SecurityController extends Controller
 {
@@ -14,7 +12,7 @@ class SecurityController extends Controller
     /**
      * @Route("/login", name="security_login"),
      */
-    public function loginAction(Request $request)
+    public function loginAction()
     {
         if ($this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_FULLY')) {
             return $this->redirectToRoute('homepage');
@@ -31,9 +29,8 @@ class SecurityController extends Controller
         return $this->render(
             'security/login.html.twig',
             array(
-                // last username entered by the user
                 'last_username' => $lastUsername,
-                'error'         => $error
+                'error' => $error,
             )
         );
     }

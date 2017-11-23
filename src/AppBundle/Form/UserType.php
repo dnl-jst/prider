@@ -19,17 +19,9 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class UserType extends AbstractType
 {
-
-    public function getName()
-    {
-        return 'UserType';
-    }
-
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->setAction($options['action'])
-            ->setMethod($options['method'])
             ->add('name', TextType::class, [
                 'required' => true,
                 'label' => 'Name'
@@ -43,14 +35,4 @@ class UserType extends AbstractType
                 'label' => 'Password'
             ]);
     }
-
-    public function configureOptions(OptionsResolver $resolver)
-    {
-        $resolver->setDefaults([
-            'data_class' => 'AppBundle\Entity\User',
-            'action' => '',
-            'method' => 'POST'
-        ]);
-    }
-
 }

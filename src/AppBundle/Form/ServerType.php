@@ -18,17 +18,9 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ServerType extends AbstractType
 {
-
-    public function getName()
-    {
-        return 'ServerType';
-    }
-
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->setAction($options['action'])
-            ->setMethod($options['method'])
             ->add('name', TextType::class, [
                 'required' => true,
                 'label' => 'Name'
@@ -74,14 +66,4 @@ class ServerType extends AbstractType
                 'label' => 'SSH Key Pair:',
             ]);
     }
-
-    public function configureOptions(OptionsResolver $resolver)
-    {
-        $resolver->setDefaults([
-            'data_class' => 'AppBundle\Entity\Server',
-            'action' => '',
-            'method' => 'POST'
-        ]);
-    }
-
 }
