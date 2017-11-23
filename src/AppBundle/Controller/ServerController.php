@@ -70,7 +70,7 @@ class ServerController extends Controller
     }
 
     /**
-     * @Route("/edit/{id}", name="server_edit")
+     * @Route("/{id}/edit", name="server_edit")
      */
     public function editAction(Request $request, EntityManagerInterface $entityManager, $id)
     {
@@ -106,7 +106,7 @@ class ServerController extends Controller
     }
 
     /**
-     * @Route("/delete/{id}", name="server_delete")
+     * @Route("/{id}/delete", name="server_delete")
      */
     public function deleteAction(Request $request, EntityManagerInterface $entityManager, $id)
     {
@@ -142,7 +142,7 @@ class ServerController extends Controller
     }
 
     /**
-     * @Route("/check/{id}", name="server_check")
+     * @Route("/{id}/check", name="server_check")
      */
     public function checkAction(EntityManagerInterface $entityManager, Ssh $ssh, $id)
     {
@@ -236,7 +236,7 @@ class ServerController extends Controller
     }
 
     /**
-     * @Route("/upgrade/{id}", name="server_upgrade")
+     * @Route("/{id}/upgrade", name="server_upgrade")
      */
     public function upgradeAction(EntityManagerInterface $entityManager, Ssh $ssh, $id)
     {

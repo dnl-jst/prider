@@ -71,7 +71,7 @@ class UserController extends Controller
     }
 
     /**
-     * @Route("/edit/{id}", name="user_edit")
+     * @Route("/{id}/edit", name="user_edit")
      */
     public function editAction(Request $request, EntityManagerInterface $entityManager, $id)
     {
@@ -114,7 +114,7 @@ class UserController extends Controller
     }
 
     /**
-     * @Route("/delete/{id}", name="user_delete")
+     * @Route("/{id}/delete", name="user_delete")
      */
     public function deleteAction(Request $request, EntityManagerInterface $entityManager, $id)
     {

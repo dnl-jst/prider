@@ -73,7 +73,7 @@ class KeyPairController extends Controller
     }
 
     /**
-     * @Route("/edit/{id}", name="keyPair_edit")
+     * @Route("/{id}/edit", name="keyPair_edit")
      */
     public function editAction(Request $request, EntityManagerInterface $entityManager, $id)
     {
@@ -114,7 +114,7 @@ class KeyPairController extends Controller
     }
 
     /**
-     * @Route("/delete/{id}", name="keyPair_delete")
+     * @Route("/{id}/delete", name="keyPair_delete")
      */
     public function deleteAction(Request $request, EntityManagerInterface $entityManager, $id)
     {

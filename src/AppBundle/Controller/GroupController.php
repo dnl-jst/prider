@@ -61,7 +61,7 @@ class GroupController extends Controller
     }
 
     /**
-     * @Route("/edit/{id}", name="group_edit")
+     * @Route("/{id}/edit", name="group_edit")
      */
     public function editAction(Request $request, EntityManagerInterface $entityManager, $id)
     {
@@ -99,7 +99,7 @@ class GroupController extends Controller
     }
 
     /**
-     * @Route("/delete/{id}", name="group_delete")
+     * @Route("/{id}/delete", name="group_delete")
      */
     public function deleteAction(Request $request, EntityManagerInterface $entityManager, $id)
     {
