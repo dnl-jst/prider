@@ -39,3 +39,6 @@ services:
 
     AppBundle\Util\NotificationSender:
         public: true
+
+    AppBundle\EventSubscriber\LocaleSubscriber:
+        arguments: ['%kernel.default_locale%']

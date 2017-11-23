@@ -9,6 +9,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 /**
  * @Route("/user")
@@ -73,11 +74,14 @@ class UserController extends Controller
     /**
      * @Route("/{id}/edit", name="user_edit")
      */
-    public function editAction(Request $request, EntityManagerInterface $entityManager, $id)
+    public function editAction(Request $request, EntityManagerInterface $entityManager, SessionInterface $session, $id)
     {
         if ($request->get('cancel')) {
             return $this->redirectToRoute('user_index');
         }
+
+        /** @var User $currentUser */
+        $currentUser = $this->getUser();
 
         /** @var User $user */
         $user = $entityManager->getRepository('AppBundle:User')->findOneBy(['id' => $id]);
@@ -103,6 +107,10 @@ class UserController extends Controller
             ));
 
             $entityManager->flush();
+
+            if ($user === $currentUser) {
+                $session->set('_locale', $user->getLocale());
+            }
 
             return $this->redirectToRoute('user_index');
         }

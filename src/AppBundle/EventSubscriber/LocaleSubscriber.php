@@ -2,13 +2,19 @@
 
 namespace AppBundle\EventSubscriber;
 
-use AppBundle\Entity\User;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class LocaleSubscriber implements EventSubscriberInterface
 {
+    private $defaultLocale;
+
+    public function __construct($defaultLocale = 'en')
+    {
+        $this->defaultLocale = $defaultLocale;
+    }
+
     public function onKernelRequest(GetResponseEvent $event)
     {
         $request = $event->getRequest();
@@ -17,14 +23,11 @@ class LocaleSubscriber implements EventSubscriberInterface
             return;
         }
 
-        /** @var User $user */
-        $user = $request->getUser();
-
-        if (!$user) {
-            return;
+        if ($locale = $request->attributes->get('_locale')) {
+            $request->getSession()->set('_locale', $locale);
+        } else {
+            $request->setLocale($request->getSession()->get('_locale', $this->defaultLocale));
         }
-
-        $request->setLocale($user->getLocale());
     }
 
     public static function getSubscribedEvents()
