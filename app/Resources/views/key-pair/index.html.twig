@@ -4,13 +4,12 @@
 
     <h1>{% trans %}Key pairs{% endtrans %}</h1>
 
-    <p>
+    <div class="mb-2">
         <a class="btn btn-primary" href="{{ path('keyPair_add') }}"><i class="fa fa-plus"></i></a>
-    </p>
+    </div>
 
     <div class="row">
     {% for keyPair in keyPairs %}
-
         <div class="col-xs-12 col-sm-4">
             <div class="card text-center">
                 <div class="card-block">
@@ -26,7 +25,6 @@
                 </div>
             </div>
         </div>
-
     {% endfor %}
     </div>
 
