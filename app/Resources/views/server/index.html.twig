@@ -1,10 +1,9 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-
     <h1>{% trans %}Servers{% endtrans %}</h1>
 
-    <div class="mb-2">
+    <div class="mb-3">
         <a class="btn btn-primary" href="{{ path('server_add') }}"><i class="fa fa-plus"></i></a>
     </div>
 
@@ -139,5 +138,4 @@
 
         });
     </script>
-
 {% endblock %}

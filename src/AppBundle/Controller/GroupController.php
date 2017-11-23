@@ -31,7 +31,7 @@ class GroupController extends Controller
     /**
      * @Route("/add", name="group_add")
      */
-    public function addAction(Request $request, EntityManagerInterface $entityManager, Translator $translator)
+    public function addAction(Request $request, EntityManagerInterface $entityManager)
     {
         if ($request->get('cancel')) {
             return $this->redirectToRoute('group_index');
@@ -43,11 +43,7 @@ class GroupController extends Controller
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-
-            $this->addFlash(
-                'success',
-                $translator->trans('Group "%name%" was created.', ['name' => $group->getName()])
-            );
+            $this->addFlash('success', 'Group was created.');
 
             $entityManager->persist($group);
             $entityManager->flush();
@@ -64,7 +60,7 @@ class GroupController extends Controller
     /**
      * @Route("/{id}/edit", name="group_edit")
      */
-    public function editAction(Request $request, EntityManagerInterface $entityManager, Translator $translator, $id)
+    public function editAction(Request $request, EntityManagerInterface $entityManager, $id)
     {
         if ($request->get('cancel')) {
             return $this->redirectToRoute('group_index');
@@ -82,11 +78,7 @@ class GroupController extends Controller
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-
-            $this->addFlash(
-                'success',
-                $translator->trans('Group "%name%" was updated.', ['%name%' => $group->getName()])
-            );
+            $this->addFlash('success', 'Group was updated.');
 
             $entityManager->flush();
 
@@ -116,10 +108,7 @@ class GroupController extends Controller
                 $entityManager->remove($group);
                 $entityManager->flush();
 
-                $this->addFlash(
-                    'success',
-                    $translator->trans('Group "%name%" was deleted.', ['%name%' => $group->getName()])
-                );
+                $this->addFlash('success', 'Group was deleted.');
             }
 
             return $this->redirectToRoute('group_index');
