@@ -31,6 +31,7 @@ class NotificationSender
         $users = $this->entityManager->getRepository(User::class)->findAll();
 
         $updatesAvailable = false;
+        $now = new \DateTime();
 
         /** @var Server $server */
         foreach ($servers as $server) {
@@ -44,6 +45,16 @@ class NotificationSender
         }
 
         foreach ($users as $user) {
+            # user doesn't want notifications
+            if ($user->getNotifications() === 0) {
+                continue;
+            }
+
+            # user wants notifications just once a day
+            if ($user->getNotifications() === 1 && $now->format('H') !== '00') {
+                continue;
+            }
+
             $mailBody = $this->twig->render(
                 '_email/update-notification.txt.twig',
                 [
