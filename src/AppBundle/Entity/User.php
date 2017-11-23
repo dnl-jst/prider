@@ -19,6 +19,11 @@ class User implements UserInterface
         2 => 'Hourly notification',
     ];
 
+    const LOCALE_ARRAY = [
+        'en' => 'English',
+        'de' => 'German',
+    ];
+
     /**
      * @ORM\Column(type="integer")
      * @ORM\Id
@@ -65,6 +70,11 @@ class User implements UserInterface
      * @ORM\Column(type="integer", options={"default": "0"})
      */
     private $notifications = 0;
+
+    /**
+     * @ORM\Column(type="string", length=2, options={"default": "en"})
+     */
+    private $locale;
 
     /**
      * Constructor
@@ -269,5 +279,21 @@ class User implements UserInterface
     public function setNotifications($notifications)
     {
         $this->notifications = $notifications;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLocale()
+    {
+        return $this->locale;
+    }
+
+    /**
+     * @param string $locale
+     */
+    public function setLocale($locale)
+    {
+        $this->locale = $locale;
     }
 }
