@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -106,11 +107,11 @@ class Group
     /**
      * Add server
      *
-     * @param \AppBundle\Entity\Server $server
+     * @param Server $server
      *
      * @return Group
      */
-    public function addServer(\AppBundle\Entity\Server $server)
+    public function addServer(Server $server)
     {
         $this->servers[] = $server;
 
@@ -120,9 +121,9 @@ class Group
     /**
      * Remove server
      *
-     * @param \AppBundle\Entity\Server $server
+     * @param Server $server
      */
-    public function removeServer(\AppBundle\Entity\Server $server)
+    public function removeServer(Server $server)
     {
         $this->servers->removeElement($server);
     }
@@ -130,7 +131,7 @@ class Group
     /**
      * Get servers
      *
-     * @return \Doctrine\Common\Collections\Collection
+     * @return Collection
      */
     public function getServers()
     {

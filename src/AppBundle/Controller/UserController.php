@@ -2,11 +2,9 @@
 
 namespace AppBundle\Controller;
 
-use AppBundle\Entity\Group;
 use AppBundle\Entity\User;
-use AppBundle\Form\GroupType;
 use AppBundle\Form\UserType;
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\FormError;
@@ -20,13 +18,10 @@ class UserController extends Controller
     /**
      * @Route("/", name="user_index")
      */
-    public function indexAction()
+    public function indexAction(EntityManagerInterface $entityManager)
     {
-        /** @var EntityManager $em */
-        $em = $this->getDoctrine()->getManager();
-
         /** @var User $users */
-        $users = $em->getRepository('AppBundle:User')->findAll();
+        $users = $entityManager->getRepository('AppBundle:User')->findAll();
 
         return $this->render('user/index.html.twig', [
             'users' => $users
@@ -36,37 +31,34 @@ class UserController extends Controller
     /**
      * @Route("/add", name="user_add")
      */
-    public function addAction(Request $request)
+    public function addAction(Request $request, EntityManagerInterface $entityManager)
     {
         if ($request->get('cancel')) {
             return $this->redirectToRoute('user_index');
         }
 
-        /** @var EntityManager $em */
-        $em = $this->getDoctrine()->getManager();
-
         $user = new User();
         $form = $this->createForm(UserType::class, $user);
-
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-
             if (!$user->getPlainPassword()) {
                 $form->addError(new FormError($this->get('translator')->trans('Please enter a password.')));
             }
 
             if (!$form->getErrors()->count()) {
-
                 $password = $this->get('security.password_encoder')
                                  ->encodePassword($user, $user->getPlainPassword());
 
                 $user->setPassword($password);
 
-                $this->addFlash('success', $this->get('translator')->trans('User "%name%" successfully created.', ['name' => $user->getName()]));
+                $this->addFlash('success', $this->get('translator')->trans(
+                    'User "%name%" successfully created.',
+                    ['name' => $user->getName()]
+                ));
 
-                $em->persist($user);
-                $em->flush();
+                $entityManager->persist($user);
+                $entityManager->flush();
 
                 return $this->redirectToRoute('user_index');
             }
@@ -79,42 +71,38 @@ class UserController extends Controller
     }
 
     /**
-     * @Route("/edit/{id}", name="user_edit")
+     * @Route("/{id}/edit", name="user_edit")
      */
-    public function editAction(Request $request, $id)
+    public function editAction(Request $request, EntityManagerInterface $entityManager, $id)
     {
         if ($request->get('cancel')) {
             return $this->redirectToRoute('user_index');
         }
 
-        /** @var EntityManager $em */
-        $em = $this->getDoctrine()->getManager();
-
         /** @var User $user */
-        $user = $em->getRepository('AppBundle:User')->findOneBy(['id' => $id]);
+        $user = $entityManager->getRepository('AppBundle:User')->findOneBy(['id' => $id]);
 
         if (!$user) {
             throw $this->createNotFoundException();
         }
 
         $form = $this->createForm(UserType::class, $user);
-
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-
             if ($user->getPlainPassword()) {
-
                 $password = $this->get('security.password_encoder')
                                  ->encodePassword($user, $user->getPlainPassword());
 
                 $user->setPassword($password);
             }
 
-            $this->addFlash('success', $this->get('translator')->trans('User "%name%" successfully updated.', ['name' => $user->getName()]));
+            $this->addFlash('success', $this->get('translator')->trans(
+                'User "%name%" successfully updated.',
+                ['name' => $user->getName()]
+            ));
 
-            $em->persist($user);
-            $em->flush();
+            $entityManager->flush();
 
             return $this->redirectToRoute('user_index');
         }
@@ -126,27 +114,26 @@ class UserController extends Controller
     }
 
     /**
-     * @Route("/delete/{id}", name="user_delete")
+     * @Route("/{id}/delete", name="user_delete")
      */
-    public function deleteAction(Request $request, $id)
+    public function deleteAction(Request $request, EntityManagerInterface $entityManager, $id)
     {
-        /** @var EntityManager $em */
-        $em = $this->getDoctrine()->getManager();
-
         /** @var User $user */
-        $user = $em->getRepository('AppBundle:User')->findOneBy(['id' => $id]);
+        $user = $entityManager->getRepository('AppBundle:User')->findOneBy(['id' => $id]);
 
         if (!$user) {
             throw $this->createNotFoundException();
         }
 
         if ($request->isMethod('post')) {
-
             if (!$request->get('cancel')) {
-                $em->remove($user);
-                $em->flush();
+                $entityManager->remove($user);
+                $entityManager->flush();
 
-                $this->addFlash('success', $this->get('translator')->trans('User "%name%" successfully deleted.', ['name' => $user->getName()]));
+                $this->addFlash('success', $this->get('translator')->trans(
+                    'User "%name%" successfully deleted.',
+                    ['name' => $user->getName()]
+                ));
             }
 
             return $this->redirectToRoute('user_index');

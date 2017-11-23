@@ -254,11 +254,11 @@ class Server
     /**
      * Set group
      *
-     * @param \AppBundle\Entity\Group $group
+     * @param Group $group
      *
      * @return Server
      */
-    public function setGroup(\AppBundle\Entity\Group $group = null)
+    public function setGroup(Group $group = null)
     {
         $this->group = $group;
 
@@ -268,7 +268,7 @@ class Server
     /**
      * Get group
      *
-     * @return \AppBundle\Entity\Group
+     * @return Group
      */
     public function getGroup()
     {
@@ -398,11 +398,11 @@ class Server
     /**
      * Set keyPair
      *
-     * @param \AppBundle\Entity\KeyPair $keyPair
+     * @param KeyPair $keyPair
      *
      * @return Server
      */
-    public function setKeyPair(\AppBundle\Entity\KeyPair $keyPair = null)
+    public function setKeyPair(KeyPair $keyPair = null)
     {
         $this->keyPair = $keyPair;
 
@@ -412,7 +412,7 @@ class Server
     /**
      * Get keyPair
      *
-     * @return \AppBundle\Entity\KeyPair
+     * @return KeyPair
      */
     public function getKeyPair()
     {

@@ -2,17 +2,12 @@
 
 namespace AppBundle\Controller;
 
-use AppBundle\Entity\Group;
 use AppBundle\Entity\KeyPair;
-use AppBundle\Entity\User;
-use AppBundle\Form\GroupType;
 use AppBundle\Form\KeyPairType;
-use AppBundle\Form\UserType;
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use phpseclib\Crypt\RSA;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -23,13 +18,10 @@ class KeyPairController extends Controller
     /**
      * @Route("/", name="keyPair_index")
      */
-    public function indexAction()
+    public function indexAction(EntityManagerInterface $entityManager)
     {
-        /** @var EntityManager $em */
-        $em = $this->getDoctrine()->getManager();
-
-        /** @var KeyPair $keyPairs */
-        $keyPairs = $em->getRepository('AppBundle:KeyPair')->findAll();
+        /** @var KeyPair[] $keyPairs */
+        $keyPairs = $entityManager->getRepository(KeyPair::class)->findAll();
 
         return $this->render('key-pair/index.html.twig', [
             'keyPairs' => $keyPairs
@@ -39,14 +31,11 @@ class KeyPairController extends Controller
     /**
      * @Route("/add", name="keyPair_add")
      */
-    public function addAction(Request $request)
+    public function addAction(Request $request, EntityManagerInterface $entityManager)
     {
         if ($request->get('cancel')) {
             return $this->redirectToRoute('keyPair_index');
         }
-
-        /** @var EntityManager $em */
-        $em = $this->getDoctrine()->getManager();
 
         $keyPair = new KeyPair();
         $form = $this->createForm(KeyPairType::class, $keyPair);
@@ -55,7 +44,13 @@ class KeyPairController extends Controller
 
         if ($form->isSubmitted() && $form->isValid()) {
 
-            $this->addFlash('success', $this->get('translator')->trans('Key pair "%name%" successfully created.', ['name' => $keyPair->getName()]));
+            $this->addFlash(
+                'success',
+                $this->get('translator')->trans(
+                    'Key pair "%name%" successfully created.',
+                    ['name' => $keyPair->getName()]
+                )
+            );
 
             $cryptRsa = new RSA();
             $cryptRsa->setPublicKeyFormat(RSA::PUBLIC_FORMAT_OPENSSH);
@@ -65,8 +60,8 @@ class KeyPairController extends Controller
             $keyPair->setPrivateKey($key['privatekey']);
             $keyPair->setPublicKey($key['publickey']);
 
-            $em->persist($keyPair);
-            $em->flush();
+            $entityManager->persist($keyPair);
+            $entityManager->flush();
 
             return $this->redirectToRoute('keyPair_index');
         }
@@ -78,19 +73,16 @@ class KeyPairController extends Controller
     }
 
     /**
-     * @Route("/edit/{id}", name="keyPair_edit")
+     * @Route("/{id}/edit", name="keyPair_edit")
      */
-    public function editAction(Request $request, $id)
+    public function editAction(Request $request, EntityManagerInterface $entityManager, $id)
     {
         if ($request->get('cancel')) {
             return $this->redirectToRoute('keyPair_index');
         }
 
-        /** @var EntityManager $em */
-        $em = $this->getDoctrine()->getManager();
-
         /** @var KeyPair $keyPair */
-        $keyPair = $em->getRepository('AppBundle:KeyPair')->findOneBy(['id' => $id]);
+        $keyPair = $entityManager->getRepository(KeyPair::class)->findOneBy(['id' => $id]);
 
         if (!$keyPair) {
             throw $this->createNotFoundException();
@@ -102,42 +94,49 @@ class KeyPairController extends Controller
 
         if ($form->isSubmitted() && $form->isValid()) {
 
-            $this->addFlash('success', $this->get('translator')->trans('Key pair "%name%" successfully updated.', ['name' => $keyPair->getName()]));
+            $this->addFlash(
+                'success',
+                $this->get('translator')->trans(
+                    'Key pair "%name%" successfully updated.',
+                    ['name' => $keyPair->getName()]
+                )
+            );
 
-            $em->persist($keyPair);
-            $em->flush();
+            $entityManager->flush();
 
             return $this->redirectToRoute('keyPair_index');
         }
 
-        return $this->render('user/form.html.twig', [
+        return $this->render('key-pair/form.html.twig', [
             'title' => 'Edit key pair',
             'form' => $form->createView()
         ]);
     }
 
     /**
-     * @Route("/delete/{id}", name="keyPair_delete")
+     * @Route("/{id}/delete", name="keyPair_delete")
      */
-    public function deleteAction(Request $request, $id)
+    public function deleteAction(Request $request, EntityManagerInterface $entityManager, $id)
     {
-        /** @var EntityManager $em */
-        $em = $this->getDoctrine()->getManager();
-
         /** @var KeyPair $keyPair */
-        $keyPair = $em->getRepository('AppBundle:KeyPair')->findOneBy(['id' => $id]);
+        $keyPair = $entityManager->getRepository(KeyPair::class)->findOneBy(['id' => $id]);
 
         if (!$keyPair) {
             throw $this->createNotFoundException();
         }
 
         if ($request->isMethod('post')) {
-
             if (!$request->get('cancel')) {
-                $em->remove($keyPair);
-                $em->flush();
+                $entityManager->remove($keyPair);
+                $entityManager->flush();
 
-                $this->addFlash('success', $this->get('translator')->trans('Key pair "%name%" successfully deleted.', ['name' => $keyPair->getName()]));
+                $this->addFlash(
+                    'success',
+                    $this->get('translator')->trans(
+                        'Key pair "%name%" successfully deleted.',
+                        ['name' => $keyPair->getName()]
+                    )
+                );
             }
 
             return $this->redirectToRoute('keyPair_index');
@@ -148,7 +147,10 @@ class KeyPairController extends Controller
             array(
                 'headline' => $this->get('translator')->trans('Really delete key pair?'),
                 'text' => $this->get('translator')->trans('Are you really sure you want to delete this key pair?'),
-                'entityTitle' => $this->get('translator')->trans('Key pair name: %name%', ['name' => $keyPair->getName()])
+                'entityTitle' => $this->get('translator')->trans(
+                    'Key pair name: %name%',
+                    ['name' => $keyPair->getName()]
+                )
             )
         );
     }
