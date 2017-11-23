@@ -1,6 +1,6 @@
 {
-    "name": "danieljost/src",
-    "license": "proprietary",
+    "name": "dnl-jst/prider",
+    "license": "MIT",
     "type": "project",
     "autoload": {
         "psr-4": {
