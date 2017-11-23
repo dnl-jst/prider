@@ -1,0 +1,5 @@
+{% trans %}Updates are available for the following servers:{% endtrans %}
+
+{% for server in servers if server.updates > 0 %}
+{{ server.name }} - {{ server.updates }} {% trans %}update available{% endtrans %}, {{ server.criticalUpdates }} {% trans %}critical{% endtrans %}
+{% endfor %}

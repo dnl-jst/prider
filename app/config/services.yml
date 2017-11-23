@@ -36,3 +36,6 @@ services:
 
     AppBundle\Util\UpdateChecker:
         public: true
+
+    AppBundle\Util\NotificationSender:
+        public: true

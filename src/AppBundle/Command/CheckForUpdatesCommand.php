@@ -3,6 +3,7 @@
 namespace AppBundle\Command;
 
 use AppBundle\Entity\Server;
+use AppBundle\Util\NotificationSender;
 use AppBundle\Util\UpdateChecker;
 use Doctrine\ORM\EntityManager;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
@@ -29,8 +30,11 @@ class CheckForUpdatesCommand extends ContainerAwareCommand
         /** @var UpdateChecker $updateChecker */
         $updateChecker = $this->getContainer()->get(UpdateChecker::class);
 
+        /** @var NotificationSender $notificationSender */
+        $notificationSender = $this->getContainer()->get(NotificationSender::class);
+
         /** @var Server[] $servers */
-        $servers = $em->getRepository(Server::class)->findAll();
+        $servers = $em->getRepository(Server::class)->findBy([]);
 
         $output->writeln('checking '. count($servers) . ' servers for updates');
 
@@ -48,6 +52,10 @@ class CheckForUpdatesCommand extends ContainerAwareCommand
         }
 
         $progress->finish();
+
         $output->writeln('');
+        $output->writeln('sending notifications to users');
+
+        $notificationSender->run($servers);
     }
 }
