@@ -81,10 +81,8 @@ class UpdateChecker
 
                 case 'yum':
                     if (preg_match('~(No|\d+) packages needed for security; (\d+) packages available~', $line, $matches)) {
-
                         $server->setUpdates((int)$matches[2]);
                         $criticalUpdates = (int)$matches[1];
-
                     }
 
                     break;
