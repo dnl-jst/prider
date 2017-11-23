@@ -12,6 +12,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Translation\Translator;
 
 /**
  * @Route("/server")
@@ -42,7 +43,7 @@ class ServerController extends Controller
     /**
      * @Route("/add", name="server_add")
      */
-    public function addAction(Request $request, EntityManagerInterface $entityManager)
+    public function addAction(Request $request, EntityManagerInterface $entityManager, Translator $translator)
     {
         if ($request->get('cancel')) {
             return $this->redirectToRoute('server_index');
@@ -55,7 +56,7 @@ class ServerController extends Controller
         if ($form->isSubmitted() && $form->isValid()) {
             $this->addFlash(
                 'success',
-                $this->get('translator')->trans('Server "%name%" was created.', ['name' => $server->getName()])
+                $translator->trans('Server "%name%" was created.', ['name' => $server->getName()])
             );
 
             $entityManager->persist($server);
@@ -65,7 +66,7 @@ class ServerController extends Controller
         }
 
         return $this->render('server/form.html.twig', [
-            'title' => 'Server erstellen',
+            'title' => 'Create server',
             'form' => $form->createView()
         ]);
     }
@@ -73,7 +74,7 @@ class ServerController extends Controller
     /**
      * @Route("/{id}/edit", name="server_edit")
      */
-    public function editAction(Request $request, EntityManagerInterface $entityManager, $id)
+    public function editAction(Request $request, EntityManagerInterface $entityManager, Translator $translator, $id)
     {
         if ($request->get('cancel')) {
             return $this->redirectToRoute('server_index');
@@ -92,7 +93,7 @@ class ServerController extends Controller
         if ($form->isSubmitted() && $form->isValid()) {
             $this->addFlash(
                 'success',
-                $this->get('translator')->trans('Server "%name%" was updated.', ['name' => $server->getName()])
+                $translator->trans('Server "%name%" was updated.', ['name' => $server->getName()])
             );
 
             $entityManager->flush();
@@ -101,7 +102,7 @@ class ServerController extends Controller
         }
 
         return $this->render('server/form.html.twig', [
-            'title' => 'Server bearbeiten',
+            'title' => 'Edit server',
             'form' => $form->createView()
         ]);
     }
@@ -109,7 +110,7 @@ class ServerController extends Controller
     /**
      * @Route("/{id}/delete", name="server_delete")
      */
-    public function deleteAction(Request $request, EntityManagerInterface $entityManager, $id)
+    public function deleteAction(Request $request, EntityManagerInterface $entityManager, Translator $translator, $id)
     {
         /** @var Server $server */
         $server = $entityManager->getRepository('AppBundle:Server')->findOneBy(['id' => $id]);
@@ -125,7 +126,7 @@ class ServerController extends Controller
 
                 $this->addFlash(
                     'success',
-                    $this->get('translator')->trans('Server "%name%" was deleted.', ['name' => $server->getName()])
+                    $translator->trans('Server "%name%" was deleted.', ['%name%' => $server->getName()])
                 );
             }
 
@@ -135,9 +136,9 @@ class ServerController extends Controller
         return $this->render(
             'delete-form.html.twig',
             array(
-                'headline' => $this->get('translator')->trans('Really delete server?'),
-                'text' => $this->get('translator')->trans('Are you really sure you want to delete this server?'),
-                'entityTitle' => $this->get('translator')->trans('Server name: %name%', ['name' => $server->getName()])
+                'headline' => $translator->trans('Really delete server?'),
+                'text' => $translator->trans('Are you really sure you want to delete this server?'),
+                'entityTitle' => $translator->trans('Server name: %name%', ['%name%' => $server->getName()])
             )
         );
     }
