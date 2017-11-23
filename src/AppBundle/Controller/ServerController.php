@@ -6,6 +6,7 @@ use AppBundle\Entity\Group;
 use AppBundle\Entity\Server;
 use AppBundle\Form\ServerType;
 use AppBundle\Util\Ssh;
+use AppBundle\Util\UpdateChecker;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -144,7 +145,7 @@ class ServerController extends Controller
     /**
      * @Route("/{id}/check", name="server_check")
      */
-    public function checkAction(EntityManagerInterface $entityManager, Ssh $ssh, $id)
+    public function checkAction(EntityManagerInterface $entityManager, UpdateChecker $updateChecker, $id)
     {
         set_time_limit(300);
 
@@ -157,77 +158,13 @@ class ServerController extends Controller
             ], 404);
         }
 
-        switch ($server->getType()) {
-            case 'apt':
-                $command = 'sudo apt-get update && sudo apt-get -q -s upgrade';
-                break;
+        $success = $updateChecker->run($server);
 
-            case 'yum':
-                $command = 'sudo yum -C --security check-update';
-                break;
-
-            default:
-                return new JsonResponse([
-                    'success' => false
-                ], 500);
+        if (!$success) {
+            return new JsonResponse([
+                'success' => false,
+            ], 404);
         }
-
-        if ($server->getKeyPair()) {
-
-            $stream = $ssh->executeCommandWithKeyPair(
-                $server->getHostname(),
-                $server->getSshPort(),
-                $server->getSshUser(),
-                $server->getKeyPair()->getPrivateKey(),
-                $server->getKeyPair()->getPublicKey(),
-                $command
-            );
-
-        } else {
-
-            $stream = $ssh->executeCommandWithPassword(
-                $server->getHostname(),
-                $server->getSshPort(),
-                $server->getSshUser(),
-                $server->getSshPassword(),
-                $command
-            );
-
-        }
-
-        $criticalUpdates = 0;
-
-        do {
-            $line = fgets($stream);
-
-            switch ($server->getType()) {
-                case 'apt':
-                    if (preg_match('~(\d+) upgraded, (\d+) newly installed, (\d+) to remove and (\d+) not upgraded~', $line, $matches)) {
-                        $server->setUpdates((int)$matches[1]);
-                    }
-
-                    if (preg_match('~^Inst ([^\s]+).*security.*\)$~', $line)) {
-                        $criticalUpdates++;
-                    }
-
-                    break;
-
-                case 'yum':
-                    if (preg_match('~(No|\d+) packages needed for security; (\d+) packages available~', $line, $matches)) {
-
-                        $server->setUpdates((int)$matches[2]);
-                        $criticalUpdates = (int)$matches[1];
-
-                    }
-
-                    break;
-            }
-        } while (!feof($stream));
-
-        $server->setCriticalUpdates($criticalUpdates);
-        $server->setLastCheck(new \DateTime());
-
-        $entityManager->flush();
 
         return new JsonResponse([
             'updates' => $server->getUpdates(),

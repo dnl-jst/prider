@@ -33,3 +33,9 @@ services:
     # AppBundle\Service\ExampleService:
     #     arguments:
     #         $someArgument: 'some_value'
+
+    AppBundle\Util\UpdateChecker:
+        public: true
+
+    AppBundle\Util\NotificationSender:
+        public: true
