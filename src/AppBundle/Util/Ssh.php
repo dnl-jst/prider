@@ -8,7 +8,9 @@ class Ssh
     {
         $connection = ssh2_connect($hostname, $sshPort);
 
-        ssh2_auth_password($connection, $sshUser, $sshPassword);
+        if (!ssh2_auth_password($connection, $sshUser, $sshPassword)) {
+            return false;
+        }
 
         return ssh2_exec($connection, $command);
     }
@@ -23,10 +25,14 @@ class Ssh
         file_put_contents($publicKeyFile, $sshPublicKey);
         file_put_contents($privateKeyFile, $sshPrivateKey);
 
-        ssh2_auth_pubkey_file($connection, $sshUser, $publicKeyFile, $privateKeyFile);
+        $success = ssh2_auth_pubkey_file($connection, $sshUser, $publicKeyFile, $privateKeyFile);
 
         unlink($publicKeyFile);
         unlink($privateKeyFile);
+
+        if (!$success) {
+            return false;
+        }
 
         return ssh2_exec($connection, $command);
     }
