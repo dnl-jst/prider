@@ -32,6 +32,11 @@ class UserType extends AbstractType
                 'label' => 'Notifications',
                 'choices' => array_flip(User::NOTIFICATION_ARRAY),
             ])
+            ->add('locale', ChoiceType::class, [
+                'required' => true,
+                'label' => 'Language',
+                'choices' => array_flip(User::LOCALE_ARRAY),
+            ])
         ;
     }
 }

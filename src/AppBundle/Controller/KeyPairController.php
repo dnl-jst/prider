@@ -9,6 +9,7 @@ use phpseclib\Crypt\RSA;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Translation\Translator;
 
 /**
  * @Route("/key-pair")
@@ -31,7 +32,7 @@ class KeyPairController extends Controller
     /**
      * @Route("/add", name="keyPair_add")
      */
-    public function addAction(Request $request, EntityManagerInterface $entityManager)
+    public function addAction(Request $request, EntityManagerInterface $entityManager, Translator $translator)
     {
         if ($request->get('cancel')) {
             return $this->redirectToRoute('keyPair_index');
@@ -46,9 +47,9 @@ class KeyPairController extends Controller
 
             $this->addFlash(
                 'success',
-                $this->get('translator')->trans(
+                $translator->trans(
                     'Key pair "%name%" successfully created.',
-                    ['name' => $keyPair->getName()]
+                    ['%name%' => $keyPair->getName()]
                 )
             );
 
@@ -75,7 +76,7 @@ class KeyPairController extends Controller
     /**
      * @Route("/{id}/edit", name="keyPair_edit")
      */
-    public function editAction(Request $request, EntityManagerInterface $entityManager, $id)
+    public function editAction(Request $request, EntityManagerInterface $entityManager, Translator $translator, $id)
     {
         if ($request->get('cancel')) {
             return $this->redirectToRoute('keyPair_index');
@@ -96,9 +97,9 @@ class KeyPairController extends Controller
 
             $this->addFlash(
                 'success',
-                $this->get('translator')->trans(
+                $translator->trans(
                     'Key pair "%name%" successfully updated.',
-                    ['name' => $keyPair->getName()]
+                    ['%name%' => $keyPair->getName()]
                 )
             );
 
@@ -116,7 +117,7 @@ class KeyPairController extends Controller
     /**
      * @Route("/{id}/delete", name="keyPair_delete")
      */
-    public function deleteAction(Request $request, EntityManagerInterface $entityManager, $id)
+    public function deleteAction(Request $request, EntityManagerInterface $entityManager, Translator $translator, $id)
     {
         /** @var KeyPair $keyPair */
         $keyPair = $entityManager->getRepository(KeyPair::class)->findOneBy(['id' => $id]);
@@ -134,7 +135,7 @@ class KeyPairController extends Controller
                     'success',
                     $this->get('translator')->trans(
                         'Key pair "%name%" successfully deleted.',
-                        ['name' => $keyPair->getName()]
+                        ['%name%' => $keyPair->getName()]
                     )
                 );
             }
@@ -145,11 +146,11 @@ class KeyPairController extends Controller
         return $this->render(
             'delete-form.html.twig',
             array(
-                'headline' => $this->get('translator')->trans('Really delete key pair?'),
-                'text' => $this->get('translator')->trans('Are you really sure you want to delete this key pair?'),
-                'entityTitle' => $this->get('translator')->trans(
+                'headline' => $translator->trans('Really delete key pair?'),
+                'text' => $translator->trans('Are you really sure you want to delete this key pair?'),
+                'entityTitle' => $translator->trans(
                     'Key pair name: %name%',
-                    ['name' => $keyPair->getName()]
+                    ['%name%' => $keyPair->getName()]
                 )
             )
         );

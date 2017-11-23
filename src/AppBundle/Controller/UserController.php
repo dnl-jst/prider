@@ -9,6 +9,8 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\Translation\Translator;
 
 /**
  * @Route("/user")
@@ -31,7 +33,7 @@ class UserController extends Controller
     /**
      * @Route("/add", name="user_add")
      */
-    public function addAction(Request $request, EntityManagerInterface $entityManager)
+    public function addAction(Request $request, EntityManagerInterface $entityManager, Translator $translator)
     {
         if ($request->get('cancel')) {
             return $this->redirectToRoute('user_index');
@@ -43,7 +45,7 @@ class UserController extends Controller
 
         if ($form->isSubmitted() && $form->isValid()) {
             if (!$user->getPlainPassword()) {
-                $form->addError(new FormError($this->get('translator')->trans('Please enter a password.')));
+                $form->addError(new FormError($translator->trans('Please enter a password.')));
             }
 
             if (!$form->getErrors()->count()) {
@@ -52,9 +54,9 @@ class UserController extends Controller
 
                 $user->setPassword($password);
 
-                $this->addFlash('success', $this->get('translator')->trans(
+                $this->addFlash('success', $translator->trans(
                     'User "%name%" successfully created.',
-                    ['name' => $user->getName()]
+                    ['%name%' => $user->getName()]
                 ));
 
                 $entityManager->persist($user);
@@ -65,19 +67,27 @@ class UserController extends Controller
         }
 
         return $this->render('user/form.html.twig', [
-            'title' => 'Benutzer erstellen',
-            'form' => $form->createView()
+            'title' => 'Create user',
+            'form' => $form->createView(),
         ]);
     }
 
     /**
      * @Route("/{id}/edit", name="user_edit")
      */
-    public function editAction(Request $request, EntityManagerInterface $entityManager, $id)
-    {
+    public function editAction(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        SessionInterface $session,
+        Translator $translator,
+        $id
+    ) {
         if ($request->get('cancel')) {
             return $this->redirectToRoute('user_index');
         }
+
+        /** @var User $currentUser */
+        $currentUser = $this->getUser();
 
         /** @var User $user */
         $user = $entityManager->getRepository('AppBundle:User')->findOneBy(['id' => $id]);
@@ -97,18 +107,22 @@ class UserController extends Controller
                 $user->setPassword($password);
             }
 
-            $this->addFlash('success', $this->get('translator')->trans(
+            $this->addFlash('success', $translator->trans(
                 'User "%name%" successfully updated.',
-                ['name' => $user->getName()]
+                ['%name%' => $user->getName()]
             ));
 
             $entityManager->flush();
+
+            if ($user === $currentUser) {
+                $session->set('_locale', $user->getLocale());
+            }
 
             return $this->redirectToRoute('user_index');
         }
 
         return $this->render('user/form.html.twig', [
-            'title' => 'Benutzer bearbeiten',
+            'title' => 'Edit user',
             'form' => $form->createView()
         ]);
     }
@@ -116,7 +130,7 @@ class UserController extends Controller
     /**
      * @Route("/{id}/delete", name="user_delete")
      */
-    public function deleteAction(Request $request, EntityManagerInterface $entityManager, $id)
+    public function deleteAction(Request $request, EntityManagerInterface $entityManager, Translator $translator, $id)
     {
         /** @var User $user */
         $user = $entityManager->getRepository('AppBundle:User')->findOneBy(['id' => $id]);
@@ -130,9 +144,9 @@ class UserController extends Controller
                 $entityManager->remove($user);
                 $entityManager->flush();
 
-                $this->addFlash('success', $this->get('translator')->trans(
+                $this->addFlash('success', $translator->trans(
                     'User "%name%" successfully deleted.',
-                    ['name' => $user->getName()]
+                    ['%name%' => $user->getName()]
                 ));
             }
 
@@ -142,9 +156,9 @@ class UserController extends Controller
         return $this->render(
             'delete-form.html.twig',
             array(
-                'headline' => $this->get('translator')->trans('Really delete user?'),
-                'text' => $this->get('translator')->trans('Are you really sure you want to delete this user?'),
-                'entityTitle' => $this->get('translator')->trans('User name: %name%', ['name' => $user->getName()])
+                'headline' => $translator->trans('Really delete user?'),
+                'text' => $translator->trans('Are you really sure you want to delete this user?'),
+                'entityTitle' => $translator->trans('User name: %name%', ['%name%' => $user->getName()])
             )
         );
     }

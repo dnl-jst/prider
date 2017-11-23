@@ -8,6 +8,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Translation\Translator;
 
 /**
  * @Route("/group")
@@ -30,7 +31,7 @@ class GroupController extends Controller
     /**
      * @Route("/add", name="group_add")
      */
-    public function addAction(Request $request, EntityManagerInterface $entityManager)
+    public function addAction(Request $request, EntityManagerInterface $entityManager, Translator $translator)
     {
         if ($request->get('cancel')) {
             return $this->redirectToRoute('group_index');
@@ -45,7 +46,7 @@ class GroupController extends Controller
 
             $this->addFlash(
                 'success',
-                $this->get('translator')->trans('Group "%name%" was created.', ['name' => $group->getName()])
+                $translator->trans('Group "%name%" was created.', ['name' => $group->getName()])
             );
 
             $entityManager->persist($group);
@@ -55,7 +56,7 @@ class GroupController extends Controller
         }
 
         return $this->render('group/form.html.twig', [
-            'title' => 'Gruppe erstellen',
+            'title' => 'Create group',
             'form' => $form->createView()
         ]);
     }
@@ -63,7 +64,7 @@ class GroupController extends Controller
     /**
      * @Route("/{id}/edit", name="group_edit")
      */
-    public function editAction(Request $request, EntityManagerInterface $entityManager, $id)
+    public function editAction(Request $request, EntityManagerInterface $entityManager, Translator $translator, $id)
     {
         if ($request->get('cancel')) {
             return $this->redirectToRoute('group_index');
@@ -84,7 +85,7 @@ class GroupController extends Controller
 
             $this->addFlash(
                 'success',
-                $this->get('translator')->trans('Group "%name%" was updated.', ['name' => $group->getName()])
+                $translator->trans('Group "%name%" was updated.', ['%name%' => $group->getName()])
             );
 
             $entityManager->flush();
@@ -93,7 +94,7 @@ class GroupController extends Controller
         }
 
         return $this->render('group/form.html.twig', [
-            'title' => 'Gruppe bearbeiten',
+            'title' => 'Edit group',
             'form' => $form->createView()
         ]);
     }
@@ -101,7 +102,7 @@ class GroupController extends Controller
     /**
      * @Route("/{id}/delete", name="group_delete")
      */
-    public function deleteAction(Request $request, EntityManagerInterface $entityManager, $id)
+    public function deleteAction(Request $request, EntityManagerInterface $entityManager, Translator $translator, $id)
     {
         /** @var Group $group */
         $group = $entityManager->getRepository(Group::class)->findOneBy(['id' => $id]);
@@ -117,7 +118,7 @@ class GroupController extends Controller
 
                 $this->addFlash(
                     'success',
-                    $this->get('translator')->trans('Group "%name%" was deleted.', ['name' => $group->getName()])
+                    $translator->trans('Group "%name%" was deleted.', ['%name%' => $group->getName()])
                 );
             }
 
@@ -127,9 +128,9 @@ class GroupController extends Controller
         return $this->render(
             'delete-form.html.twig',
             array(
-                'headline' => $this->get('translator')->trans('Really delete group?'),
-                'text' => $this->get('translator')->trans('Are you really sure you want to delete this group?'),
-                'entityTitle' => $this->get('translator')->trans('Group name: %name%', ['name' => $group->getName()])
+                'headline' => $translator->trans('Really delete group?'),
+                'text' => $translator->trans('Are you really sure you want to delete this group?'),
+                'entityTitle' => $translator->trans('Group name: %name%', ['%name%' => $group->getName()])
             )
         );
     }

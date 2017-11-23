@@ -34,7 +34,7 @@ class ServerType extends AbstractType
             ])
             ->add('sshPort', NumberType::class, [
                 'required' => true,
-                'label' => 'SSH port:'
+                'label' => 'SSH port'
             ])
             ->add('group', EntityType::class, [
                 'class' => 'AppBundle:Group',
@@ -42,7 +42,7 @@ class ServerType extends AbstractType
                 'choice_label' => function (Group $group) {
                     return $group->getName();
                 },
-                'label' => 'Group:',
+                'label' => 'Group',
             ])
             ->add('type', ChoiceType::class, [
                 'required' => true,
@@ -50,7 +50,7 @@ class ServerType extends AbstractType
                     'apt' => 'apt',
                     'yum' => 'yum'
                 ],
-                'label' => 'Used package manager:'
+                'label' => 'Used package manager'
             ])
             ->add('keyPair', EntityType::class, [
                 'class' => 'AppBundle:KeyPair',
@@ -58,7 +58,7 @@ class ServerType extends AbstractType
                 'choice_label' => function (KeyPair $keyPair) {
                     return $keyPair->getName();
                 },
-                'label' => 'SSH Key Pair:',
+                'label' => 'SSH key pair',
             ]);
     }
 }

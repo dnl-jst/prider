@@ -24,7 +24,7 @@
                         <h4 class="card-title">{{ server.name }}</h4>
 
                         <p class="update-stats">
-                            <span class="updates">{{ server.updates }}</span> Updates verfügbar, davon <span class="criticalUpdates">{{ server.criticalUpdates }}</span> kritisch
+                            <span class="updates">{{ server.updates }}</span> {% trans %}updates available,{% endtrans %} <span class="criticalUpdates">{{ server.criticalUpdates }}</span> {% trans %}critical{% endtrans %}
                         </p>
 
                         <a class="btn btn-primary btn-server-check" href="{{ path('server_check', {id: server.id}) }}"><i class="fa fa-refresh"></i></a>
@@ -59,7 +59,7 @@
                             <h4 class="card-title">{{ server.name }}</h4>
 
                             <p class="update-stats">
-                                <span class="updates">{{ server.updates }}</span> Updates verfügbar, davon <span class="criticalUpdates">{{ server.criticalUpdates }}</span> kritisch
+                                <span class="updates">{{ server.updates }}</span> {% trans %}updates available,{% endtrans %} <span class="criticalUpdates">{{ server.criticalUpdates }}</span> {% trans %}critical{% endtrans %}
                             </p>
 
                             <a class="btn btn-primary btn-server-check" href="{{ path('server_check', {id: server.id}) }}"><i class="fa fa-refresh"></i></a>
