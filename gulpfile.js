@@ -1,9 +1,8 @@
 var gulp = require('gulp');
-var sass = require('gulp-ruby-sass');
-var cleanCSS = require('gulp-clean-css');
+var sass = require('gulp-sass');
 
 gulp.task('default', function() {
-    return gulp.start('styles', 'watch');
+    return gulp.start('styles');
 });
 
 gulp.task('watch', function() {
@@ -11,9 +10,7 @@ gulp.task('watch', function() {
 });
 
 gulp.task('styles', function() {
-
-  return sass('web/css/**/*.scss', {compass: true, sourcemap: false, style: 'expanded'})
-    .pipe(cleanCSS({compatibility: 'ie8'}))
+  return gulp.src('web/css/**/*.scss')
+    .pipe(sass({outputStyle: 'compressed'}).on('error', sass.logError))
     .pipe(gulp.dest('web/css/'));
-
 });
