@@ -11,7 +11,7 @@
     <div class="group">
         <h2>{{ group.name }}</h2>
 
-        <div>
+        <div class="mb-3">
             <a class="btn btn-primary btn-refresh-group" href="#"><i class="fa fa-refresh"></i></a>
         </div>
 
@@ -46,9 +46,9 @@
     <div class="group">
         <h2>{% trans %}Servers without group{% endtrans %}</h2>
 
-        <p>
+        <div class="mb-3">
             <a class="btn btn-primary btn-refresh-group" href="#"><i class="fa fa-refresh"></i></a>
-        </p>
+        </div>
 
         <div class="row">
             {% for server in ungroupedServers %}
