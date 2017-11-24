@@ -32,7 +32,7 @@ class KeyPairController extends Controller
     /**
      * @Route("/add", name="keyPair_add")
      */
-    public function addAction(Request $request, EntityManagerInterface $entityManager, Translator $translator)
+    public function addAction(Request $request, EntityManagerInterface $entityManager)
     {
         if ($request->get('cancel')) {
             return $this->redirectToRoute('keyPair_index');
@@ -44,14 +44,7 @@ class KeyPairController extends Controller
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-
-            $this->addFlash(
-                'success',
-                $translator->trans(
-                    'Key pair "%name%" successfully created.',
-                    ['%name%' => $keyPair->getName()]
-                )
-            );
+            $this->addFlash('success', 'Key pair successfully created.');
 
             $cryptRsa = new RSA();
             $cryptRsa->setPublicKeyFormat(RSA::PUBLIC_FORMAT_OPENSSH);
@@ -76,7 +69,7 @@ class KeyPairController extends Controller
     /**
      * @Route("/{id}/edit", name="keyPair_edit")
      */
-    public function editAction(Request $request, EntityManagerInterface $entityManager, Translator $translator, $id)
+    public function editAction(Request $request, EntityManagerInterface $entityManager, $id)
     {
         if ($request->get('cancel')) {
             return $this->redirectToRoute('keyPair_index');
@@ -94,14 +87,7 @@ class KeyPairController extends Controller
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-
-            $this->addFlash(
-                'success',
-                $translator->trans(
-                    'Key pair "%name%" successfully updated.',
-                    ['%name%' => $keyPair->getName()]
-                )
-            );
+            $this->addFlash('success', 'Key pair successfully updated.');
 
             $entityManager->flush();
 
@@ -131,13 +117,7 @@ class KeyPairController extends Controller
                 $entityManager->remove($keyPair);
                 $entityManager->flush();
 
-                $this->addFlash(
-                    'success',
-                    $this->get('translator')->trans(
-                        'Key pair "%name%" successfully deleted.',
-                        ['%name%' => $keyPair->getName()]
-                    )
-                );
+                $this->addFlash('success', 'Key pair "%name%" successfully deleted.');
             }
 
             return $this->redirectToRoute('keyPair_index');
