@@ -4,35 +4,24 @@
     <meta charset="UTF-8" />
     <title>{% block title %}{% trans %}Prider Server Management{% endtrans %}{% endblock %}</title>
 
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro">
-    <link rel="stylesheet" href="/bower_components/font-awesome/css/font-awesome.min.css" />
-    <link rel="stylesheet" href="/bower_components/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="/css/style.css" />
-    {% block stylesheets %}{% endblock %}
-
-    <script type="text/javascript" src="/bower_components/jquery/dist/jquery.min.js"></script>
-    <script type="text/javascript" src="/bower_components/tether/dist/js/tether.min.js"></script>
-    <script type="text/javascript" src="/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="/js/app.js"></script>
-    {% block javascripts %}{% endblock %}
+    {% block stylesheets %}
+    <link rel="stylesheet" href="/build/styles.css" />
+    {% endblock %}
 
     <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
 </head>
 
 <body class="{% block additionalBodyClass %}{% endblock %}">
 
-<nav class="navbar navbar-toggleable-md navbar-inverse bg-inverse fixed-top">
-
-    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#mainNavbar" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+<nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+    <a class="navbar-brand" href="#">{% trans %}Prider Server Management{% endtrans %}</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
 
-    <div class="navbar-container container center-layout">
-        <a class="navbar-brand" href="/">{% trans %}Prider Server Management{% endtrans %}</a>
-
-        <div class="collapse navbar-collapse" id="mainNavbar">
-            <ul class="navbar-nav mr-auto">
-                {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+    <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+        <ul class="navbar-nav mr-auto">
+            {% if is_granted('IS_AUTHENTICATED_FULLY') %}
                 <li class="nav-item">
                     <a class="nav-link" href="{{ path('server_index') }}">{% trans %}Servers{% endtrans %}</a>
                 </li>
@@ -45,22 +34,22 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{{ path('keyPair_index') }}">{% trans %}Key pairs{% endtrans %}</a>
                 </li>
-                {% endif %}
-            </ul>
-            <ul class="navbar-nav my-2 my-lg-0">
-                {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+            {% endif %}
+        </ul>
+        <ul class="navbar-nav my-2 my-lg-0">
+            {% if is_granted('IS_AUTHENTICATED_FULLY') %}
                 <li class="nav-item">
                     <a class="nav-link" href="{{ path('security_logout') }}">{% trans %}Logout{% endtrans %}</a>
                 </li>
-                {% else %}
+            {% else %}
                 <li class="nav-item">
                     <a class="nav-link" href="{{ path('security_login') }}">{% trans %}Login{% endtrans %}</a>
                 </li>
-                {% endif %}
-            </ul>
-        </div>
+            {% endif %}
+        </ul>
     </div>
 </nav>
+
 
 <div class="container">
     <div class="row">
@@ -93,6 +82,10 @@
         </div>
     </div>
 </footer>
+
+{% block javascripts %}
+<script type="text/javascript" src="/build/scripts.js"></script>
+{% endblock %}
 
 </body>
 </html>
