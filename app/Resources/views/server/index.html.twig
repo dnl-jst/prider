@@ -72,70 +72,74 @@
         </div>
     </div>
     {% endif %}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
 
     <script type="text/javascript">
-        $(function() {
+      $(function () {
 
-          $('.btn-server-check').click(function(e) {
+        $('.btn-server-check').click(function (e) {
 
-            e.preventDefault();
+          e.preventDefault();
 
-            $(this).html('<i class="fa fa-spinner fa-spin"></i>');
+          $(this).html('<i class="fa fa-spinner fa-spin"></i>');
 
-            var $that = $(this);
+          var $that = $(this);
 
-            $.post({
-              url: $that.attr('href'),
-              timeout: 0,
-              success: function(result) {
-                $that.html('<i class="fa fa-refresh"></i>');
+          $.post({
+            url: $that.attr('href'),
+            timeout: 0,
+            success: function (result) {
+              $that.html('<i class="fa fa-refresh"></i>');
 
-                $that.closest('.card').find('.updates').html(result.updates);
-                $that.closest('.card').find('.criticalUpdates').html(result.criticalUpdates);
-              },
-              error: function() {
-                $that.removeClass('btn-primary').addClass('btn-danger').html('<i class="fa fa-exclamation-triangle"></i>');
-              }
-            });
-
-          });
-
-          $('.btn-refresh-group').click(function(e) {
-
-            e.preventDefault();
-
-            $(this).closest('.group').find('.btn-server-check').click();
-
-          });
-
-          $('.btn-server-upgrade').click(function(e) {
-
-            e.preventDefault();
-
-            if (!confirm('{% trans %}Are you sure you want to upgrade the server?{% endtrans %}')) {
-              return false;
+              $that.closest('.card').find('.updates').html(result.updates);
+              $that.closest('.card').find('.criticalUpdates').html(result.criticalUpdates);
+            },
+            error: function () {
+              $that.removeClass('btn-primary').addClass('btn-danger').html('<i class="fa fa-exclamation-triangle"></i>');
             }
-
-            $(this).html('<i class="fa fa-spinner fa-spin"></i>');
-
-            var $that = $(this);
-
-            $.post({
-              url: $that.attr('href'),
-              timeout: 0,
-              success: function(result) {
-                $that.html('<i class="fa fa-send"></i>');
-
-                $that.closest('.card').find('.updates').html(result.updates);
-                $that.closest('.card').find('.criticalUpdates').html(result.criticalUpdates);
-              },
-              error: function() {
-                $that.removeClass('btn-primary').addClass('btn-danger').html('<i class="fa fa-exclamation-triangle"></i>');
-              }
-            });
-
           });
 
         });
+
+        $('.btn-refresh-group').click(function (e) {
+
+          e.preventDefault();
+
+          $(this).closest('.group').find('.btn-server-check').click();
+
+        });
+
+        $('.btn-server-upgrade').click(function (e) {
+
+          e.preventDefault();
+
+          if (!confirm('{% trans %}Are you sure you want to upgrade the server?{% endtrans %}')) {
+            return false;
+          }
+
+          $(this).html('<i class="fa fa-spinner fa-spin"></i>');
+
+          var $that = $(this);
+
+          $.post({
+            url: $that.attr('href'),
+            timeout: 0,
+            success: function (result) {
+              $that.html('<i class="fa fa-send"></i>');
+
+              $that.closest('.card').find('.updates').html(result.updates);
+              $that.closest('.card').find('.criticalUpdates').html(result.criticalUpdates);
+            },
+            error: function () {
+              $that.removeClass('btn-primary').addClass('btn-danger').html('<i class="fa fa-exclamation-triangle"></i>');
+            }
+          });
+
+        });
+
+      });
     </script>
 {% endblock %}
