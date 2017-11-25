@@ -4,12 +4,9 @@
     <meta charset="UTF-8" />
     <title>{% block title %}{% trans %}Prider Server Management{% endtrans %}{% endblock %}</title>
 
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro">
+    {% block stylesheets %}
     <link rel="stylesheet" href="/build/styles.css" />
-    {% block stylesheets %}{% endblock %}
-
-    <script type="text/javascript" src="/build/scripts.js"></script>
-    {% block javascripts %}{% endblock %}
+    {% endblock %}
 
     <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
 </head>
@@ -85,6 +82,10 @@
         </div>
     </div>
 </footer>
+
+{% block javascripts %}
+<script type="text/javascript" src="/build/scripts.js"></script>
+{% endblock %}
 
 </body>
 </html>
