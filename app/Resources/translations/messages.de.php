@@ -83,5 +83,5 @@ return [
 
     // notification mail
     'Updates are available for the following servers:' => 'Für folgende Server sind Updates verfügbar:',
-    'update available' => 'Updates verfügbar',
+    'updates available' => 'Updates verfügbar',
 ];
