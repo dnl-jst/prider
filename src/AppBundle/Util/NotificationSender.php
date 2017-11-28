@@ -56,7 +56,7 @@ class NotificationSender
             }
 
             $mailBody = $this->twig->render(
-                '_email/update-notification.txt.twig',
+                '_email/update-notification.html.twig',
                 [
                     'user' => $user,
                     'servers' => $servers,
@@ -65,7 +65,7 @@ class NotificationSender
 
             $message = new \Swift_Message('Updates available');
             $message->setFrom('no-reply@prider');
-            $message->setBody($mailBody);
+            $message->setBody($mailBody, 'text/html');
             $message->setTo($user->getEmail());
 
             $this->swiftMailer->send($message);

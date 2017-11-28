@@ -1,0 +1,9 @@
+<div>
+    {% trans %}Updates are available for the following servers:{% endtrans %}
+</div>
+
+<ul>
+{% for server in servers if server.updates > 0 %}
+    <li>{{ server.name }} - {{ server.updates }} {% trans %}updates available{% endtrans %}, {{ server.criticalUpdates }} {% trans %}critical{% endtrans %}</li>
+{% endfor %}
+</ul>
