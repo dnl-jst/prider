@@ -34,7 +34,7 @@ class CheckForUpdatesCommand extends ContainerAwareCommand
         $notificationSender = $this->getContainer()->get(NotificationSender::class);
 
         /** @var Server[] $servers */
-        $servers = $em->getRepository(Server::class)->findBy([]);
+        $servers = $em->getRepository(Server::class)->findBy([], ['name' => 'ASC']);
 
         $output->writeln('checking '. count($servers) . ' servers for updates');
 
