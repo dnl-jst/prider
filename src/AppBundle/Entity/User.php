@@ -13,6 +13,16 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class User implements UserInterface
 {
+    const NOTIFICATION_ARRAY = [
+        0 => 'Disable notifications',
+        1 => 'Daily notification',
+        2 => 'Hourly notification',
+    ];
+
+    const LOCALE_ARRAY = [
+        'en' => 'English',
+        'de' => 'German',
+    ];
 
     /**
      * @ORM\Column(type="integer")
@@ -55,6 +65,16 @@ class User implements UserInterface
      * @ORM\Column(type="datetime")
      */
     private $created;
+
+    /**
+     * @ORM\Column(type="integer", options={"default": "0"})
+     */
+    private $notifications = 0;
+
+    /**
+     * @ORM\Column(type="string", length=2, options={"default": "en"})
+     */
+    private $locale;
 
     /**
      * Constructor
@@ -243,5 +263,37 @@ class User implements UserInterface
     public function getName()
     {
         return $this->name;
+    }
+
+    /**
+     * @return integer
+     */
+    public function getNotifications()
+    {
+        return $this->notifications;
+    }
+
+    /**
+     * @param integer $notifications
+     */
+    public function setNotifications($notifications)
+    {
+        $this->notifications = $notifications;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLocale()
+    {
+        return $this->locale;
+    }
+
+    /**
+     * @param string $locale
+     */
+    public function setLocale($locale)
+    {
+        $this->locale = $locale;
     }
 }

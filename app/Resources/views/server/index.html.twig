@@ -1,34 +1,34 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-
     <h1>{% trans %}Servers{% endtrans %}</h1>
 
-    <p>
+    <div class="mb-3">
         <a class="btn btn-primary" href="{{ path('server_add') }}"><i class="fa fa-plus"></i></a>
-    </p>
+    </div>
 
     {% for group in groups %}
     <div class="group">
         <h2>{{ group.name }}</h2>
 
-        <p>
+        <div class="mb-3">
             <a class="btn btn-primary btn-refresh-group" href="#"><i class="fa fa-refresh"></i></a>
-        </p>
+        </div>
 
         <div class="row">
             {% for server in group.servers %}
             <div class="col-xs-12 col-sm-4 pb-3">
                 <div class="card text-center">
-                    <div class="card-block">
+                    <div class="card-body">
                         <h4 class="card-title">{{ server.name }}</h4>
 
                         <p class="update-stats">
-                            <span class="updates">{{ server.updates }}</span> Updates verfügbar, davon <span class="criticalUpdates">{{ server.criticalUpdates }}</span> kritisch
+                            <span class="updates">{{ server.updates }}</span> {% trans %}updates available,{% endtrans %} <span class="criticalUpdates">{{ server.criticalUpdates }}</span> {% trans %}critical{% endtrans %}
                         </p>
 
                         <a class="btn btn-primary btn-server-check" href="{{ path('server_check', {id: server.id}) }}"><i class="fa fa-refresh"></i></a>
                         <a class="btn btn-primary btn-server-upgrade" href="{{ path('server_upgrade', {id: server.id}) }}"><i class="fa fa-send"></i></a>
+                        <a class="btn btn-primary" href="ssh://root@{{ server.hostname }}/"><i class="fa fa-terminal"></i></a>
                         <a class="btn btn-primary" href="{{ path('server_edit', {id: server.id}) }}"><i class="fa fa-edit"></i></a>
                         <a class="btn btn-primary" href="{{ path('server_delete', {id: server.id}) }}"><i class="fa fa-times"></i></a>
                     </div>
@@ -47,23 +47,24 @@
     <div class="group">
         <h2>{% trans %}Servers without group{% endtrans %}</h2>
 
-        <p>
+        <div class="mb-3">
             <a class="btn btn-primary btn-refresh-group" href="#"><i class="fa fa-refresh"></i></a>
-        </p>
+        </div>
 
         <div class="row">
             {% for server in ungroupedServers %}
                 <div class="col-xs-12 col-sm-4">
                     <div class="card text-center">
-                        <div class="card-block">
+                        <div class="card-body">
                             <h4 class="card-title">{{ server.name }}</h4>
 
                             <p class="update-stats">
-                                <span class="updates">{{ server.updates }}</span> Updates verfügbar, davon <span class="criticalUpdates">{{ server.criticalUpdates }}</span> kritisch
+                                <span class="updates">{{ server.updates }}</span> {% trans %}updates available,{% endtrans %} <span class="criticalUpdates">{{ server.criticalUpdates }}</span> {% trans %}critical{% endtrans %}
                             </p>
 
                             <a class="btn btn-primary btn-server-check" href="{{ path('server_check', {id: server.id}) }}"><i class="fa fa-refresh"></i></a>
                             <a class="btn btn-primary btn-server-upgrade" href="{{ path('server_upgrade', {id: server.id}) }}"><i class="fa fa-send"></i></a>
+                            <a class="btn btn-primary" href="ssh://root@{{ server.hostname }}/"><i class="fa fa-terminal"></i></a>
                             <a class="btn btn-primary" href="{{ path('server_edit', {id: server.id}) }}"><i class="fa fa-edit"></i></a>
                             <a class="btn btn-primary" href="{{ path('server_delete', {id: server.id}) }}"><i class="fa fa-times"></i></a>
                         </div>
@@ -73,71 +74,74 @@
         </div>
     </div>
     {% endif %}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
 
     <script type="text/javascript">
-        $(function() {
+      $(function () {
 
-          $('.btn-server-check').click(function(e) {
+        $('.btn-server-check').click(function (e) {
 
-            e.preventDefault();
+          e.preventDefault();
 
-            $(this).html('<i class="fa fa-spinner fa-spin"></i>');
+          $(this).html('<i class="fa fa-spinner fa-spin"></i>');
 
-            var $that = $(this);
+          var $that = $(this);
 
-            $.post({
-              url: $that.attr('href'),
-              timeout: 0,
-              success: function(result) {
-                $that.html('<i class="fa fa-refresh"></i>');
+          $.post({
+            url: $that.attr('href'),
+            timeout: 0,
+            success: function (result) {
+              $that.html('<i class="fa fa-refresh"></i>');
 
-                $that.closest('.card').find('.updates').html(result.updates);
-                $that.closest('.card').find('.criticalUpdates').html(result.criticalUpdates);
-              },
-              error: function() {
-                $that.removeClass('btn-primary').addClass('btn-danger').html('<i class="fa fa-exclamation-triangle"></i>');
-              }
-            });
-
-          });
-
-          $('.btn-refresh-group').click(function(e) {
-
-            e.preventDefault();
-
-            $(this).closest('.group').find('.btn-server-check').click();
-
-          });
-
-          $('.btn-server-upgrade').click(function(e) {
-
-            e.preventDefault();
-
-            if (!confirm('{% trans %}Are you sure you want to upgrade the server?{% endtrans %}')) {
-              return false;
+              $that.closest('.card').find('.updates').html(result.updates);
+              $that.closest('.card').find('.criticalUpdates').html(result.criticalUpdates);
+            },
+            error: function () {
+              $that.removeClass('btn-primary').addClass('btn-danger').html('<i class="fa fa-exclamation-triangle"></i>');
             }
-
-            $(this).html('<i class="fa fa-spinner fa-spin"></i>');
-
-            var $that = $(this);
-
-            $.post({
-              url: $that.attr('href'),
-              timeout: 0,
-              success: function(result) {
-                $that.html('<i class="fa fa-send"></i>');
-
-                $that.closest('.card').find('.updates').html(result.updates);
-                $that.closest('.card').find('.criticalUpdates').html(result.criticalUpdates);
-              },
-              error: function() {
-                $that.removeClass('btn-primary').addClass('btn-danger').html('<i class="fa fa-exclamation-triangle"></i>');
-              }
-            });
-
           });
 
         });
-    </script>
 
+        $('.btn-refresh-group').click(function (e) {
+
+          e.preventDefault();
+
+          $(this).closest('.group').find('.btn-server-check').click();
+
+        });
+
+        $('.btn-server-upgrade').click(function (e) {
+
+          e.preventDefault();
+
+          if (!confirm('{% trans %}Are you sure you want to upgrade the server?{% endtrans %}')) {
+            return false;
+          }
+
+          $(this).html('<i class="fa fa-spinner fa-spin"></i>');
+
+          var $that = $(this);
+
+          $.post({
+            url: $that.attr('href'),
+            timeout: 0,
+            success: function (result) {
+              $that.html('<i class="fa fa-send"></i>');
+
+              $that.closest('.card').find('.updates').html(result.updates);
+              $that.closest('.card').find('.criticalUpdates').html(result.criticalUpdates);
+            },
+            error: function () {
+              $that.removeClass('btn-primary').addClass('btn-danger').html('<i class="fa fa-exclamation-triangle"></i>');
+            }
+          });
+
+        });
+
+      });
+    </script>
 {% endblock %}

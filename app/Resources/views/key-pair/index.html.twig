@@ -1,19 +1,17 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-
     <h1>{% trans %}Key pairs{% endtrans %}</h1>
 
-    <p>
+    <div class="mb-3">
         <a class="btn btn-primary" href="{{ path('keyPair_add') }}"><i class="fa fa-plus"></i></a>
-    </p>
+    </div>
 
     <div class="row">
     {% for keyPair in keyPairs %}
-
-        <div class="col-xs-12 col-sm-4">
+        <div class="col-xs-12 col-sm-4 pb-3">
             <div class="card text-center">
-                <div class="card-block">
+                <div class="card-body">
                     <h4 class="card-title">{{ keyPair.name }}</h4>
 
                     <div class="pb-3">
@@ -26,8 +24,6 @@
                 </div>
             </div>
         </div>
-
     {% endfor %}
     </div>
-
 {% endblock %}

@@ -9,6 +9,7 @@ use phpseclib\Crypt\RSA;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Translation\Translator;
 
 /**
  * @Route("/key-pair")
@@ -43,14 +44,7 @@ class KeyPairController extends Controller
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-
-            $this->addFlash(
-                'success',
-                $this->get('translator')->trans(
-                    'Key pair "%name%" successfully created.',
-                    ['name' => $keyPair->getName()]
-                )
-            );
+            $this->addFlash('success', 'Key pair successfully created.');
 
             $cryptRsa = new RSA();
             $cryptRsa->setPublicKeyFormat(RSA::PUBLIC_FORMAT_OPENSSH);
@@ -93,14 +87,7 @@ class KeyPairController extends Controller
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-
-            $this->addFlash(
-                'success',
-                $this->get('translator')->trans(
-                    'Key pair "%name%" successfully updated.',
-                    ['name' => $keyPair->getName()]
-                )
-            );
+            $this->addFlash('success', 'Key pair successfully updated.');
 
             $entityManager->flush();
 
@@ -116,7 +103,7 @@ class KeyPairController extends Controller
     /**
      * @Route("/{id}/delete", name="keyPair_delete")
      */
-    public function deleteAction(Request $request, EntityManagerInterface $entityManager, $id)
+    public function deleteAction(Request $request, EntityManagerInterface $entityManager, Translator $translator, $id)
     {
         /** @var KeyPair $keyPair */
         $keyPair = $entityManager->getRepository(KeyPair::class)->findOneBy(['id' => $id]);
@@ -130,13 +117,7 @@ class KeyPairController extends Controller
                 $entityManager->remove($keyPair);
                 $entityManager->flush();
 
-                $this->addFlash(
-                    'success',
-                    $this->get('translator')->trans(
-                        'Key pair "%name%" successfully deleted.',
-                        ['name' => $keyPair->getName()]
-                    )
-                );
+                $this->addFlash('success', 'Key pair "%name%" successfully deleted.');
             }
 
             return $this->redirectToRoute('keyPair_index');
@@ -145,11 +126,11 @@ class KeyPairController extends Controller
         return $this->render(
             'delete-form.html.twig',
             array(
-                'headline' => $this->get('translator')->trans('Really delete key pair?'),
-                'text' => $this->get('translator')->trans('Are you really sure you want to delete this key pair?'),
-                'entityTitle' => $this->get('translator')->trans(
+                'headline' => $translator->trans('Really delete key pair?'),
+                'text' => $translator->trans('Are you really sure you want to delete this key pair?'),
+                'entityTitle' => $translator->trans(
                     'Key pair name: %name%',
-                    ['name' => $keyPair->getName()]
+                    ['%name%' => $keyPair->getName()]
                 )
             )
         );

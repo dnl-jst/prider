@@ -8,6 +8,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Translation\Translator;
 
 /**
  * @Route("/group")
@@ -42,11 +43,7 @@ class GroupController extends Controller
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-
-            $this->addFlash(
-                'success',
-                $this->get('translator')->trans('Group "%name%" was created.', ['name' => $group->getName()])
-            );
+            $this->addFlash('success', 'Group was created.');
 
             $entityManager->persist($group);
             $entityManager->flush();
@@ -55,7 +52,7 @@ class GroupController extends Controller
         }
 
         return $this->render('group/form.html.twig', [
-            'title' => 'Gruppe erstellen',
+            'title' => 'Create group',
             'form' => $form->createView()
         ]);
     }
@@ -81,11 +78,7 @@ class GroupController extends Controller
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-
-            $this->addFlash(
-                'success',
-                $this->get('translator')->trans('Group "%name%" was updated.', ['name' => $group->getName()])
-            );
+            $this->addFlash('success', 'Group was updated.');
 
             $entityManager->flush();
 
@@ -93,7 +86,7 @@ class GroupController extends Controller
         }
 
         return $this->render('group/form.html.twig', [
-            'title' => 'Gruppe bearbeiten',
+            'title' => 'Edit group',
             'form' => $form->createView()
         ]);
     }
@@ -101,7 +94,7 @@ class GroupController extends Controller
     /**
      * @Route("/{id}/delete", name="group_delete")
      */
-    public function deleteAction(Request $request, EntityManagerInterface $entityManager, $id)
+    public function deleteAction(Request $request, EntityManagerInterface $entityManager, Translator $translator, $id)
     {
         /** @var Group $group */
         $group = $entityManager->getRepository(Group::class)->findOneBy(['id' => $id]);
@@ -115,10 +108,7 @@ class GroupController extends Controller
                 $entityManager->remove($group);
                 $entityManager->flush();
 
-                $this->addFlash(
-                    'success',
-                    $this->get('translator')->trans('Group "%name%" was deleted.', ['name' => $group->getName()])
-                );
+                $this->addFlash('success', 'Group was deleted.');
             }
 
             return $this->redirectToRoute('group_index');
@@ -127,9 +117,9 @@ class GroupController extends Controller
         return $this->render(
             'delete-form.html.twig',
             array(
-                'headline' => $this->get('translator')->trans('Really delete group?'),
-                'text' => $this->get('translator')->trans('Are you really sure you want to delete this group?'),
-                'entityTitle' => $this->get('translator')->trans('Group name: %name%', ['name' => $group->getName()])
+                'headline' => $translator->trans('Really delete group?'),
+                'text' => $translator->trans('Are you really sure you want to delete this group?'),
+                'entityTitle' => $translator->trans('Group name: %name%', ['%name%' => $group->getName()])
             )
         );
     }

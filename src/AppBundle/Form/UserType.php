@@ -2,20 +2,13 @@
 
 namespace AppBundle\Form;
 
-use AppBundle\Entity\Group;
-use AppBundle\Entity\Topic;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use AppBundle\Entity\User;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
-use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class UserType extends AbstractType
 {
@@ -33,6 +26,17 @@ class UserType extends AbstractType
             ->add('plainPassword', PasswordType::class, [
                 'required' => false,
                 'label' => 'Password'
-            ]);
+            ])
+            ->add('notifications', ChoiceType::class, [
+                'required' => true,
+                'label' => 'Notifications',
+                'choices' => array_flip(User::NOTIFICATION_ARRAY),
+            ])
+            ->add('locale', ChoiceType::class, [
+                'required' => true,
+                'label' => 'Language',
+                'choices' => array_flip(User::LOCALE_ARRAY),
+            ])
+        ;
     }
 }

@@ -4,24 +4,17 @@
     <div class="container">
         <div class="row">
             <div class="col">
-
-                <h1>{{ title }}</h1>
+                <h1>{{ title | trans }}</h1>
 
                 {{ form_start(form) }}
+                    {{ form_errors(form) }}
+                    {{ form_row(form.name) }}
 
-                {{ form_errors(form) }}
-
-                <div class="form-group">
-                    {{ form_row(form.name, { 'attr': {'class': 'form-control'} }) }}
-                </div>
-
-                <div class="text-center form-group">
-                    <button type="submit" name="save" value="yes" class="btn btn-primary">{% trans %}Save{% endtrans %}</button>
-                    <button type="submit" name="cancel" value="yes" class="btn btn-secondary">{% trans %}Cancel{% endtrans %}</button>
-                </div>
-
+                    <div class="text-center form-group">
+                        <button type="submit" name="save" value="yes" class="btn btn-primary">{% trans %}Save{% endtrans %}</button>
+                        <a href="{{ path('group_index') }}" class="btn btn-secondary">{% trans %}Cancel{% endtrans %}</a>
+                    </div>
                 {{ form_end(form) }}
-
             </div>
         </div>
     </div>

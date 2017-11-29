@@ -6,11 +6,13 @@ use AppBundle\Entity\Group;
 use AppBundle\Entity\Server;
 use AppBundle\Form\ServerType;
 use AppBundle\Util\Ssh;
+use AppBundle\Util\UpdateChecker;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Translation\Translator;
 
 /**
  * @Route("/server")
@@ -52,10 +54,7 @@ class ServerController extends Controller
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->addFlash(
-                'success',
-                $this->get('translator')->trans('Server "%name%" was created.', ['name' => $server->getName()])
-            );
+            $this->addFlash('success', 'Server was created.');
 
             $entityManager->persist($server);
             $entityManager->flush();
@@ -64,7 +63,7 @@ class ServerController extends Controller
         }
 
         return $this->render('server/form.html.twig', [
-            'title' => 'Server erstellen',
+            'title' => 'Create server',
             'form' => $form->createView()
         ]);
     }
@@ -89,10 +88,7 @@ class ServerController extends Controller
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->addFlash(
-                'success',
-                $this->get('translator')->trans('Server "%name%" was updated.', ['name' => $server->getName()])
-            );
+            $this->addFlash('success', 'Server was updated.');
 
             $entityManager->flush();
 
@@ -100,7 +96,7 @@ class ServerController extends Controller
         }
 
         return $this->render('server/form.html.twig', [
-            'title' => 'Server bearbeiten',
+            'title' => 'Edit server',
             'form' => $form->createView()
         ]);
     }
@@ -108,7 +104,7 @@ class ServerController extends Controller
     /**
      * @Route("/{id}/delete", name="server_delete")
      */
-    public function deleteAction(Request $request, EntityManagerInterface $entityManager, $id)
+    public function deleteAction(Request $request, EntityManagerInterface $entityManager, Translator $translator, $id)
     {
         /** @var Server $server */
         $server = $entityManager->getRepository('AppBundle:Server')->findOneBy(['id' => $id]);
@@ -122,10 +118,7 @@ class ServerController extends Controller
                 $entityManager->remove($server);
                 $entityManager->flush();
 
-                $this->addFlash(
-                    'success',
-                    $this->get('translator')->trans('Server "%name%" was deleted.', ['name' => $server->getName()])
-                );
+                $this->addFlash('success', 'Server was deleted.');
             }
 
             return $this->redirectToRoute('server_index');
@@ -134,9 +127,9 @@ class ServerController extends Controller
         return $this->render(
             'delete-form.html.twig',
             array(
-                'headline' => $this->get('translator')->trans('Really delete server?'),
-                'text' => $this->get('translator')->trans('Are you really sure you want to delete this server?'),
-                'entityTitle' => $this->get('translator')->trans('Server name: %name%', ['name' => $server->getName()])
+                'headline' => $translator->trans('Really delete server?'),
+                'text' => $translator->trans('Are you really sure you want to delete this server?'),
+                'entityTitle' => $translator->trans('Server name: %name%', ['%name%' => $server->getName()])
             )
         );
     }
@@ -144,7 +137,7 @@ class ServerController extends Controller
     /**
      * @Route("/{id}/check", name="server_check")
      */
-    public function checkAction(EntityManagerInterface $entityManager, Ssh $ssh, $id)
+    public function checkAction(EntityManagerInterface $entityManager, UpdateChecker $updateChecker, $id)
     {
         set_time_limit(300);
 
@@ -157,77 +150,13 @@ class ServerController extends Controller
             ], 404);
         }
 
-        switch ($server->getType()) {
-            case 'apt':
-                $command = 'sudo apt-get update && sudo apt-get -q -s upgrade';
-                break;
+        $success = $updateChecker->run($server);
 
-            case 'yum':
-                $command = 'sudo yum -C --security check-update';
-                break;
-
-            default:
-                return new JsonResponse([
-                    'success' => false
-                ], 500);
+        if (!$success) {
+            return new JsonResponse([
+                'success' => false,
+            ], 404);
         }
-
-        if ($server->getKeyPair()) {
-
-            $stream = $ssh->executeCommandWithKeyPair(
-                $server->getHostname(),
-                $server->getSshPort(),
-                $server->getSshUser(),
-                $server->getKeyPair()->getPrivateKey(),
-                $server->getKeyPair()->getPublicKey(),
-                $command
-            );
-
-        } else {
-
-            $stream = $ssh->executeCommandWithPassword(
-                $server->getHostname(),
-                $server->getSshPort(),
-                $server->getSshUser(),
-                $server->getSshPassword(),
-                $command
-            );
-
-        }
-
-        $criticalUpdates = 0;
-
-        do {
-            $line = fgets($stream);
-
-            switch ($server->getType()) {
-                case 'apt':
-                    if (preg_match('~(\d+) upgraded, (\d+) newly installed, (\d+) to remove and (\d+) not upgraded~', $line, $matches)) {
-                        $server->setUpdates((int)$matches[1]);
-                    }
-
-                    if (preg_match('~^Inst ([^\s]+).*security.*\)$~', $line)) {
-                        $criticalUpdates++;
-                    }
-
-                    break;
-
-                case 'yum':
-                    if (preg_match('~(No|\d+) packages needed for security; (\d+) packages available~', $line, $matches)) {
-
-                        $server->setUpdates((int)$matches[2]);
-                        $criticalUpdates = (int)$matches[1];
-
-                    }
-
-                    break;
-            }
-        } while (!feof($stream));
-
-        $server->setCriticalUpdates($criticalUpdates);
-        $server->setLastCheck(new \DateTime());
-
-        $entityManager->flush();
 
         return new JsonResponse([
             'updates' => $server->getUpdates(),
