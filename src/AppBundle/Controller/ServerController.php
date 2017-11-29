@@ -5,7 +5,6 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\Group;
 use AppBundle\Entity\Server;
 use AppBundle\Form\ServerType;
-use AppBundle\Util\Ssh;
 use AppBundle\Util\UpdateChecker;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -162,69 +161,5 @@ class ServerController extends Controller
             'updates' => $server->getUpdates(),
             'criticalUpdates' => $server->getCriticalUpdates()
         ]);
-    }
-
-    /**
-     * @Route("/{id}/upgrade", name="server_upgrade")
-     */
-    public function upgradeAction(EntityManagerInterface $entityManager, Ssh $ssh, $id)
-    {
-        set_time_limit(600);
-
-        /** @var Server $server */
-        $server = $entityManager->getRepository('AppBundle:Server')->findOneBy(['id' => $id]);
-
-        if (!$server) {
-            return new JsonResponse([
-                'success' => false
-            ], 404);
-        }
-
-        switch ($server->getType()) {
-            case 'apt':
-                $command = 'sudo apt-get update && sudo apt-get -y dist-upgrade';
-                break;
-
-            case 'yum':
-                $command = 'sudo yum upgrade -y';
-                break;
-
-            default:
-                return new JsonResponse([
-                    'success' => false
-                ], 500);
-        }
-
-        if ($server->getKeyPair()) {
-            $stream = $ssh->executeCommandWithKeyPair(
-                $server->getHostname(),
-                $server->getSshPort(),
-                $server->getSshUser(),
-                $server->getKeyPair()->getPrivateKey(),
-                $server->getKeyPair()->getPublicKey(),
-                $command
-            );
-        } else {
-            $stream = $ssh->executeCommandWithPassword(
-                $server->getHostname(),
-                $server->getSshPort(),
-                $server->getSshUser(),
-                $server->getSshPassword(),
-                $command
-            );
-        }
-
-        stream_set_blocking($stream, true);
-
-        // wait for stream to finish
-        stream_get_contents($stream);
-
-        $server->setLastCheck(new \DateTime());
-        $server->setLastUpgrade(new \DateTime());
-
-        $entityManager->persist($server);
-        $entityManager->flush();
-
-        return $this->forward('AppBundle:Server:check', ['id' => $id]);
     }
 }
