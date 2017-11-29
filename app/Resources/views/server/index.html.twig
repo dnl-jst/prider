@@ -27,7 +27,6 @@
                         </p>
 
                         <a class="btn btn-primary btn-server-check" href="{{ path('server_check', {id: server.id}) }}"><i class="fa fa-refresh"></i></a>
-                        <a class="btn btn-primary btn-server-upgrade" href="{{ path('server_upgrade', {id: server.id}) }}"><i class="fa fa-send"></i></a>
                         <a class="btn btn-primary" href="ssh://root@{{ server.hostname }}/"><i class="fa fa-terminal"></i></a>
                         <a class="btn btn-primary" href="{{ path('server_edit', {id: server.id}) }}"><i class="fa fa-edit"></i></a>
                         <a class="btn btn-primary" href="{{ path('server_delete', {id: server.id}) }}"><i class="fa fa-times"></i></a>
@@ -63,7 +62,6 @@
                             </p>
 
                             <a class="btn btn-primary btn-server-check" href="{{ path('server_check', {id: server.id}) }}"><i class="fa fa-refresh"></i></a>
-                            <a class="btn btn-primary btn-server-upgrade" href="{{ path('server_upgrade', {id: server.id}) }}"><i class="fa fa-send"></i></a>
                             <a class="btn btn-primary" href="ssh://root@{{ server.hostname }}/"><i class="fa fa-terminal"></i></a>
                             <a class="btn btn-primary" href="{{ path('server_edit', {id: server.id}) }}"><i class="fa fa-edit"></i></a>
                             <a class="btn btn-primary" href="{{ path('server_delete', {id: server.id}) }}"><i class="fa fa-times"></i></a>
@@ -113,35 +111,6 @@
           $(this).closest('.group').find('.btn-server-check').click();
 
         });
-
-        $('.btn-server-upgrade').click(function (e) {
-
-          e.preventDefault();
-
-          if (!confirm('{% trans %}Are you sure you want to upgrade the server?{% endtrans %}')) {
-            return false;
-          }
-
-          $(this).html('<i class="fa fa-spinner fa-spin"></i>');
-
-          var $that = $(this);
-
-          $.post({
-            url: $that.attr('href'),
-            timeout: 0,
-            success: function (result) {
-              $that.html('<i class="fa fa-send"></i>');
-
-              $that.closest('.card').find('.updates').html(result.updates);
-              $that.closest('.card').find('.criticalUpdates').html(result.criticalUpdates);
-            },
-            error: function () {
-              $that.removeClass('btn-primary').addClass('btn-danger').html('<i class="fa fa-exclamation-triangle"></i>');
-            }
-          });
-
-        });
-
       });
     </script>
 {% endblock %}
