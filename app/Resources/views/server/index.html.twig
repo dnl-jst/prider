@@ -28,6 +28,7 @@
 
                         <a class="btn btn-primary btn-server-check" href="{{ path('server_check', {id: server.id}) }}"><i class="fa fa-refresh"></i></a>
                         <a class="btn btn-primary btn-server-upgrade" href="{{ path('server_upgrade', {id: server.id}) }}"><i class="fa fa-send"></i></a>
+                        <a class="btn btn-primary" href="ssh://root@{{ server.hostname }}/"><i class="fa fa-terminal"></i></a>
                         <a class="btn btn-primary" href="{{ path('server_edit', {id: server.id}) }}"><i class="fa fa-edit"></i></a>
                         <a class="btn btn-primary" href="{{ path('server_delete', {id: server.id}) }}"><i class="fa fa-times"></i></a>
                     </div>
@@ -63,6 +64,7 @@
 
                             <a class="btn btn-primary btn-server-check" href="{{ path('server_check', {id: server.id}) }}"><i class="fa fa-refresh"></i></a>
                             <a class="btn btn-primary btn-server-upgrade" href="{{ path('server_upgrade', {id: server.id}) }}"><i class="fa fa-send"></i></a>
+                            <a class="btn btn-primary" href="ssh://root@{{ server.hostname }}/"><i class="fa fa-terminal"></i></a>
                             <a class="btn btn-primary" href="{{ path('server_edit', {id: server.id}) }}"><i class="fa fa-edit"></i></a>
                             <a class="btn btn-primary" href="{{ path('server_delete', {id: server.id}) }}"><i class="fa fa-times"></i></a>
                         </div>
