@@ -3,7 +3,7 @@
 
 Vagrant.configure("2") do |config|
 
-  config.vm.box = "ubuntu/trusty64"
+  config.vm.box = "ubuntu/xenial64"
   config.vm.hostname = "prider.local"
   config.vm.provision :shell, path: "vagrant/provision.sh"
   config.vm.synced_folder ".", "/vagrant", nfs: true

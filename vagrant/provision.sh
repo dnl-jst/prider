@@ -16,8 +16,8 @@ debconf-set-selections <<< "postfix postfix/main_mailer_type string 'Internet Si
 # install mysql, nginx, php5-fpm
 apt-get install -y mysql-server mysql-client ssl-cert postfix curl vim
 
-# install apache2 with php 5.6
-apt-get install -y php7.0 apache2 libapache2-mod-php7.0 php7.0-mysql php7.0-curl php7.0-cli php7.0-zip php7.0-xml php7.0-mbstring php7.0-ssh2
+# install apache2 with php 7.2
+apt-get install -y php7.2 apache2 libapache2-mod-php7.2 php7.2-mysql php7.2-curl php7.2-cli php7.2-zip php7.2-xml php7.2-mbstring php7.2-ssh2
 
 # generate snakeoil ssl certificate
 make-ssl-cert generate-default-snakeoil
@@ -45,6 +45,8 @@ a2enmod rewrite
 # restart services
 service apache2 restart
 
-# create mysql database
-echo "CREATE DATABASE IF NOT EXISTS prider" | mysql -uroot -prootpass
-echo "GRANT ALL PRIVILEGES ON prider.* TO prider@\`%\` IDENTIFIED BY 'hsfbiuu2';" | mysql -uroot -prootpass
+# create database
+bin/console do:da:cr --if-not-exists
+
+# load migrations
+bin/console do:mi:mi
